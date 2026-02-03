@@ -6,7 +6,7 @@
 
 * **Live Battle Scanner:** Uses Android's MediaProjection and Google ML Kit to scan the top screen for Pokémon names in real-time.
 * **Smart Multitasking:**
-    * **Battle Mode:** Automatically displays data for the Pokémon detected on screen.
+    * **Battle Mode:** Automatically displays data for the Pokémon detected on screen (supports multi-pokemon battles e.g. 2v2, 3v3).
     * **Pokedex Mode:** Browse the full database manually.
     * **"Battle Tab":** Minimizes active battle data to a small tab at the bottom while you browse, allowing you to multitask without losing your place.
 * **Generation Selector:** Dynamic type system allows you to switch between logic for Gen 1, Gen 2-5, and Gen 6+ (e.g., retrofitting Fairy types back to Normal for older games).
