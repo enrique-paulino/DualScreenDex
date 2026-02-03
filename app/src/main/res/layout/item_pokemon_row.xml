@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp"
+    android:gravity="center_vertical"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvRowId"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="@string/_001"
+        android:textSize="14sp"
+        android:textColor="#9E9E9E"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvRowName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/bulbasaur"
+        android:textSize="16sp"
+        android:textColor="#3E2723"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/rowTypesContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+</LinearLayout>

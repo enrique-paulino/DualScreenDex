@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">DualScreenDex</string>
+
+    <string name="status_ready">Status: Ready to Scan</string>
+    <string name="status_watching">Status: Watching Screen…</string>
+    <string name="btn_start">Start Capture</string>
+    <string name="btn_running">Running</string>
+
+    <string name="detected_result">Detected: %1$s\nTypes: %2$s</string>
+
+    <string name="perm_denied">Permission Denied</string>
+    <string name="next">›</string>
+    <string name="Back">‹</string>
+    <string name="search_pokemon">Search Pokemon...</string>
+    <string name="leftarrow">◀</string>
+    <string name="_005">#005</string>
+    <string name="example_pokemon">Example Pokemon</string>
+    <string name="right_arrow">▶</string>
+    <string name="_007">#007</string>
+    <string name="weak_against">Weak against...</string>
+    <string name="resistant_against">Resistant against...</string>
+    <string name="back_to_list">Back to List</string>
+    <string name="battle">⚔️ BATTLE</string>
+    <string name="charizard">Charizard</string>
+    <string name="fire">FIRE</string>
+    <string name="bulbasaur">Bulbasaur</string>
+    <string name="_001">#001</string>
+    <string name="fire2">FIRE</string>
+    <string name="_2">× 2</string>
+</resources>
