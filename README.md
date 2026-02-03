@@ -16,6 +16,13 @@
     * Crops image processing to the game window to save resources.
 * **Offline Ready:** Includes a complete database of all 1,025 Pokémon.
 
+## Demo Video
+
+<a href="https://www.youtube.com/watch?v=JMTiW8wY358">
+  <video src="https://github.com/user-attachments/assets/7e5c7c09-2865-4e57-9b8e-76198134f4fb" width="400" controls muted autoplay loop>
+  </video>
+</a>
+
 ## Installation
 
 1.  Download the latest APK from the [Releases](../../releases) page.
@@ -31,12 +38,6 @@
 * **Database:** SQLite (Pre-populated asset)
 * **Architecture:** Foreground Service with `LocalBroadcastManager`
 
-## Demo Video
-
-<a href="https://www.youtube.com/watch?v=JMTiW8wY358">
-  <video src="https://github.com/user-attachments/assets/7e5c7c09-2865-4e57-9b8e-76198134f4fb" width="400" controls muted autoplay loop>
-  </video>
-</a>
 
 ## License
 
