@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.drawable.GradientDrawable
+import androidx.core.graphics.ColorUtils
 
 class PokemonAdapter(
     private var fullList: List<Pokemon>,
@@ -15,14 +16,11 @@ class PokemonAdapter(
 
     private var filteredList = fullList.toMutableList()
     private var currentGen: TypeMatchup.Gen = TypeMatchup.Gen.GEN_6_PLUS
-
-    fun updateGeneration(newGen: TypeMatchup.Gen) {
-        currentGen = newGen
-        notifyDataSetChanged()
-    }
+    private var currentTheme: AppTheme = ThemeManager.currentTheme
 
     inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvRowName)
+        val tvId: TextView = itemView.findViewById(R.id.tvRowId)
         val typeContainer: LinearLayout = itemView.findViewById(R.id.rowTypesContainer)
     }
 
@@ -34,14 +32,21 @@ class PokemonAdapter(
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
         val pokemon = filteredList[position]
 
-        holder.tvName.text = pokemon.name.replaceFirstChar { it.uppercase() }
-        val tvId = holder.itemView.findViewById<TextView>(R.id.tvRowId)
-        tvId.text = String.format("#%03d", pokemon.id) // turns 1 into #001
+        val displayName = if (pokemon.variantLabel != null) {
+            "${pokemon.name} (${pokemon.variantLabel})"
+        } else {
+            pokemon.name
+        }
+
+        holder.tvName.text = displayName.replaceFirstChar { it.uppercase() }
+        holder.tvId.text = String.format("#%03d", pokemon.id)  // turns 1 into #001
+
+        holder.tvName.setTextColor(currentTheme.listTextColor)
+        holder.tvId.setTextColor(ColorUtils.setAlphaComponent(currentTheme.listTextColor, 128))
 
         val (t1, t2) = GenerationHelper.getGenSpecificTypes(pokemon, currentGen)
 
         holder.typeContainer.removeAllViews()
-
         addMiniBadge(holder.typeContainer, t1)
         if (t2 != PokemonType.UNKNOWN) {
             addMiniBadge(holder.typeContainer, t2)
@@ -51,6 +56,12 @@ class PokemonAdapter(
     }
 
     override fun getItemCount() = filteredList.size
+
+    fun updateSettings(newGen: TypeMatchup.Gen, newTheme: AppTheme) {
+        this.currentGen = newGen
+        this.currentTheme = newTheme
+        notifyDataSetChanged()
+    }
 
     fun filter(query: String) {
         filteredList = if (query.isEmpty()) {

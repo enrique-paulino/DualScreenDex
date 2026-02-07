@@ -21,7 +21,7 @@
             android:hint="@string/search_pokemon"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             app:endIconMode="custom"
-            app:endIconDrawable="@drawable/ic_filter_padded"
+            app:endIconDrawable="@drawable/ic_settings"
             app:endIconContentDescription="Select Generation"
             app:endIconTint="#5D4037">
 
@@ -179,6 +179,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVariantToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Switch Form (Alolan)"
+                        android:visibility="gone"
+                        android:layout_marginBottom="12dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="#5D4037"
+                        app:strokeWidth="2dp"
+                        android:textColor="#5D4037"/>
 
                     <TextView
                         android:id="@+id/lblWeak"

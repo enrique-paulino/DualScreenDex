@@ -12,31 +12,28 @@ class PokedexHelper(private val context: Context) :
 
     companion object {
         const val DATABASE_NAME = "pokedex.db"
-        const val DATABASE_VERSION = 3 // bumped for schema update
+        const val DATABASE_VERSION = 6
 
-        private const val CSV_FILENAME = "pokemon_data.csv"
-
-        // csv column indices
-        // id(0), name(1), ..., types(6), ..., sprite_url(38)
-        private const val COL_IDX_ID = 0
-        private const val COL_IDX_NAME = 1
-        private const val COL_IDX_TYPES = 6
-        private const val COL_IDX_SPRITE = 38
+        private const val CSV_VANILLA = "vanilla.csv"
+        private const val CSV_REGIONAL = "vanilla-regional.csv"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
+        // _id as primary key to not conflict with variant data
         val createTable = """
             CREATE TABLE pokemon (
-                name TEXT PRIMARY KEY, 
+                _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT, 
                 type1 TEXT, 
                 type2 TEXT,
                 pokedex_id INTEGER,
-                sprite_url TEXT
+                variant TEXT
             )
         """.trimIndent()
         db.execSQL(createTable)
 
-        loadDataFromCSV(db)
+        loadVanillaData(db)
+        loadRegionalData(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -44,43 +41,36 @@ class PokedexHelper(private val context: Context) :
         onCreate(db)
     }
 
-    private fun loadDataFromCSV(db: SQLiteDatabase) {
+    private fun loadVanillaData(db: SQLiteDatabase) {
         try {
             db.beginTransaction()
-            val assetManager = context.assets
-            val inputStream = assetManager.open(CSV_FILENAME)
+            val inputStream = context.assets.open(CSV_VANILLA)
             val reader = BufferedReader(InputStreamReader(inputStream))
 
-            // skip header
-            reader.readLine()
+            reader.readLine() // skip header
 
             var line: String?
             while (reader.readLine().also { line = it } != null) {
-                // parse while handling quotes
                 val tokens = parseCsvLine(line!!)
+                if (tokens.size < 3) continue
 
-                if (tokens.size < 7) continue // safety check
+                // Your CSV has: ID, Name, ['Type1', 'Type2']
+                val id = tokens[0].toIntOrNull() ?: 0
+                val name = tokens[1].trim()
+                val rawTypes = tokens[2]
 
-                val id = tokens[COL_IDX_ID].toIntOrNull() ?: 0
-                val name = tokens[COL_IDX_NAME].trim()
-                val rawTypes = tokens[COL_IDX_TYPES] // e.g. "['Grass', 'Poison']"
-                val spriteUrl = if (tokens.size > COL_IDX_SPRITE) tokens[COL_IDX_SPRITE] else ""
-
-                // clean up the weird array string
                 val (t1, t2) = parseTypes(rawTypes)
 
                 val values = ContentValues().apply {
                     put("name", name)
                     put("pokedex_id", id)
                     put("type1", t1)
-                    put("type2", t2) // can be null
-                    put("sprite_url", spriteUrl)
+                    put("type2", t2)
+                    put("variant", null as String?) // Standard pokemon have no variant label
                 }
 
-                // ignore duplicates
-                db.insertWithOnConflict("pokemon", null, values, SQLiteDatabase.CONFLICT_IGNORE)
+                db.insert("pokemon", null, values)
             }
-
             db.setTransactionSuccessful()
             reader.close()
         } catch (e: Exception) {
@@ -90,7 +80,52 @@ class PokedexHelper(private val context: Context) :
         }
     }
 
-    // parses: "['Grass', 'Poison']" -> Grass, Poison
+    private fun loadRegionalData(db: SQLiteDatabase) {
+        try {
+            val list = context.assets.list("")
+            if (list == null || !list.contains(CSV_REGIONAL)) return
+
+            db.beginTransaction()
+            val inputStream = context.assets.open(CSV_REGIONAL)
+            val reader = BufferedReader(InputStreamReader(inputStream))
+
+            // skip header
+            val header = reader.readLine()
+
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                val tokens = parseCsvLine(line!!)
+
+                if (tokens.size >= 4) {
+                    val name = tokens[0].trim()
+                    val id = tokens[1].trim().toIntOrNull() ?: 0
+
+                    val rawTypes = tokens[2].trim()
+                    val typeParts = rawTypes.split(",").map { it.trim() }
+
+                    val t1 = typeParts.getOrElse(0) { "Normal" }.uppercase()
+                    val t2 = if (typeParts.size > 1) typeParts[1].uppercase() else null
+
+                    val variant = tokens[3].trim()
+
+                    val values = ContentValues().apply {
+                        put("name", name)
+                        put("pokedex_id", id)
+                        put("type1", t1)
+                        put("type2", t2)
+                        put("variant", variant)
+                    }
+                    db.insert("pokemon", null, values)
+                }
+            }
+            db.setTransactionSuccessful()
+            reader.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+    }
     private fun parseTypes(raw: String): Pair<String, String?> {
         // strip brackets and quotes
         val clean = raw.replace("[", "")
@@ -132,44 +167,47 @@ class PokedexHelper(private val context: Context) :
     fun getAllPokemon(): List<Pokemon> {
         val list = ArrayList<Pokemon>()
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM pokemon ORDER BY pokedex_id ASC", null)
+        // order by id, then by variant
+        val cursor = db.rawQuery("SELECT * FROM pokemon ORDER BY pokedex_id ASC, variant ASC", null)
 
         if (cursor.moveToFirst()) {
             do {
-                val pName = cursor.getString(0)
-                val t1Str = cursor.getString(1)
-                val t2Str = cursor.getString(2)
-                val pId = cursor.getInt(3)
-                val sUrl = cursor.getString(4)
+                val pName = cursor.getString(1)
+                val t1Str = cursor.getString(2)
+                val t2Str = cursor.getString(3)
+                val pId = cursor.getInt(4)
+                val variant = cursor.getString(5)
 
                 val t1 = PokemonType.fromString(t1Str)
                 val t2 = if (t2Str != null) PokemonType.fromString(t2Str) else null
 
-                list.add(Pokemon(pName, pId, t1, t2, sUrl))
+                list.add(Pokemon(pName, pId, t1, t2, variant))
             } while (cursor.moveToNext())
         }
         cursor.close()
         return list
     }
 
-    fun getPokemon(name: String): Pokemon? {
+    fun getVariantsFor(name: String): List<Pokemon> {
+        val list = ArrayList<Pokemon>()
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM pokemon WHERE name LIKE ?", arrayOf(name))
+        val cursor = db.rawQuery("SELECT * FROM pokemon WHERE name LIKE ? ORDER BY variant ASC", arrayOf(name))
 
-        var result: Pokemon? = null
         if (cursor.moveToFirst()) {
-            val pName = cursor.getString(0)
-            val t1Str = cursor.getString(1)
-            val t2Str = cursor.getString(2)
-            val pId = cursor.getInt(3)
-            val sUrl = cursor.getString(4)
+            do {
+                val pName = cursor.getString(1)
+                val t1Str = cursor.getString(2)
+                val t2Str = cursor.getString(3)
+                val pId = cursor.getInt(4)
+                val variant = cursor.getString(5)
 
-            val t1 = PokemonType.fromString(t1Str)
-            val t2 = if (t2Str != null) PokemonType.fromString(t2Str) else null
+                val t1 = PokemonType.fromString(t1Str)
+                val t2 = if (t2Str != null) PokemonType.fromString(t2Str) else null
 
-            result = Pokemon(pName, pId, t1, t2, sUrl)
+                list.add(Pokemon(pName, pId, t1, t2, variant))
+            } while (cursor.moveToNext())
         }
         cursor.close()
-        return result
+        return list
     }
 }

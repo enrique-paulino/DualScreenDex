@@ -25,6 +25,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import androidx.core.graphics.createBitmap
 
 class ScreenCaptureService : Service() {
 
@@ -58,13 +59,9 @@ class ScreenCaptureService : Service() {
         createNotificationChannel()
         val notification = createNotification()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION)
-            } catch (e: Exception) {
-                startForeground(1, notification)
-            }
-        } else {
+        try {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION)
+        } catch (e: Exception) {
             startForeground(1, notification)
         }
 
@@ -154,8 +151,16 @@ class ScreenCaptureService : Service() {
             return
         }
 
-        // crop to top half only, since that's usually where the enemy battle info is
-        val croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height / 2)
+        val startX = bitmap.width / 3  // crop first 33% to ignore user's party
+        val targetWidth = bitmap.width - startX
+        val targetHeight = bitmap.height / 2
+
+        if (targetWidth <= 0 || targetHeight <= 0) {
+            isProcessing = false
+            return
+        }
+
+        val croppedBitmap = Bitmap.createBitmap(bitmap, startX, 0, targetWidth, targetHeight)
 
         // feed cropped bit to ml kit
         val inputImage = InputImage.fromBitmap(croppedBitmap, 0)
@@ -179,11 +184,7 @@ class ScreenCaptureService : Service() {
         val rowStride = planes[0].rowStride
         val rowPadding = rowStride - pixelStride * image.width
 
-        val bitmap = Bitmap.createBitmap(
-            image.width + rowPadding / pixelStride,
-            image.height,
-            Bitmap.Config.ARGB_8888
-        )
+        val bitmap = createBitmap(image.width + rowPadding / pixelStride, image.height)
         bitmap.copyPixelsFromBuffer(buffer)
 
         if (rowPadding == 0) return bitmap
@@ -193,16 +194,20 @@ class ScreenCaptureService : Service() {
     private fun processDetectedText(rawText: String) {
         val cleanText = rawText.uppercase().replace("\n", " ")
 
-        // grab every unique pokemon we see, not just the first match
+        var searchBuffer = cleanText
         val matches = ArrayList<Pokemon>()
         val foundNames = HashSet<String>()
 
         for (p in knownPokemonList) {
-            if (cleanText.contains(p.name.uppercase())) {
-                // prevent dupes (e.g. don't add charizard twice)
+            val pName = p.name.uppercase()
+
+            // prevent dupes (e.g. don't add charizard twice)
+            if (searchBuffer.contains(pName)) {
                 if (!foundNames.contains(p.name)) {
                     matches.add(p)
                     foundNames.add(p.name)
+
+                    searchBuffer = searchBuffer.replaceFirst(pName, "")
                 }
             }
         }
@@ -236,14 +241,12 @@ class ScreenCaptureService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "screen_capture_channel",
-                "Screen Capture",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            "screen_capture_channel",
+            "Screen Capture",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
     }
 
     private fun createNotification(): Notification {

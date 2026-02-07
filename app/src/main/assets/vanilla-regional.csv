@@ -1,0 +1,54 @@
+name,id,types,region
+Rattata,19,"dark,normal",Alolan
+Raticate,20,"dark,normal",Alolan
+Raichu,26,"electric,psychic",Alolan
+Sandshrew,27,"ice,steel",Alolan
+Sandslash,28,"ice,steel",Alolan
+Vulpix,37,ice,Alolan
+Ninetales,38,"ice,fairy",Alolan
+Diglett,50,"ground,steel",Alolan
+Dugtrio,51,"ground,steel",Alolan
+Meowth,52,dark,Alolan
+Meowth,52,steel,Galarian
+Persian,53,dark,Alolan
+Geodude,74,"rock,electric",Alolan
+Graveler,75,"rock,electric",Alolan
+Golem,76,"rock,electric",Alolan
+Grimer,88,"poison,dark",Alolan
+Muk,89,"poison,dark",Alolan
+Exeggutor,103,"grass,dragon",Alolan
+Marowak,105,"fire,ghost",Alolan
+Weezing,110,"poison,fairy",Galarian
+Mr. Mime,122,"ice,psychic",Galarian
+Zigzagoon,263,"dark,normal",Galarian
+Linoone,264,"dark,normal",Galarian
+Darumaka,554,ice,Galarian
+Darmanitan,555,ice,Galarian
+Yamask,562,"ground,ghost",Galarian
+Stunfisk,618,"ground,steel",Galarian
+Slowpoke,79,psychic,Galarian
+Slowbro,80,"poison,psychic",Galarian
+Slowking,199,"poison,psychic",Galarian
+Articuno,144,"psychic,flying",Galarian
+Zapdos,145,"fighting,flying",Galarian
+Moltres,146,"dark,flying",Galarian
+Growlithe,58,"fire,rock",Hisuian
+Arcanine,59,"fire,rock",Hisuian
+Voltorb,100,"electric,grass",Hisuian
+Electrode,101,"electric,grass",Hisuian
+Typhlosion,157,"fire,ghost",Hisuian
+Qwilfish,211,"dark,poison",Hisuian
+Sneasel,215,"fighting,poison",Hisuian
+Samurott,503,"water,dark",Hisuian
+Lilligant,549,"grass,fighting",Hisuian
+Zorua,570,"normal,ghost",Hisuian
+Zoroark,571,"normal,ghost",Hisuian
+Braviary,628,"psychic,flying",Hisuian
+Sliggoo,705,"steel,dragon",Hisuian
+Goodra,706,"steel,dragon",Hisuian
+Avalugg,713,"ice,rock",Hisuian
+Decidueye,724,"grass,fighting",Hisuian
+Wooper,194,"poison,ground",Paldean
+Tauros,128,fighting,Paldean (Combat)
+Tauros,128,"fighting,fire",Paldean (Blaze)
+Tauros,128,"fighting,water",Paldean (Aqua)
