@@ -29,6 +29,7 @@
 * [x] **v1.1 (current):** Themes, regional variants, and improved scanning.
 * [ ] **Custom ROM Support:** Allow users to import their own `.csv` files to support ROM hacks.
 * [ ] **Custom Matchup Logic:** Support for user-defined type effectiveness charts (e.g., changing Fire to be weak against Ice).
+* [ ] **Language Support:** Support for non-english languages that have different pokemon names (e.g. Japanese)
 
 ## Demo Video
 
