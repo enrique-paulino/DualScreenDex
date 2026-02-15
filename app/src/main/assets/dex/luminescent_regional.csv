@@ -1,0 +1,69 @@
+﻿id,region,type1,type2
+19,Alolan,Normal,Dark
+20,Alolan,Normal,Dark
+25,Clone,Electric,
+26,Alolan,Electric,Psychic
+27,Alolan,Ice,Steel
+28,Alolan,Ice,Steel
+37,Alolan,Ice,
+38,Alolan,Ice,Fairy
+50,Alolan,Ground,Steel
+51,Alolan,Ground,Steel
+52,Alolan,Dark,
+52,Galarian,Steel,
+53,Alolan,Dark,
+58,Hisuian,Fire,Rock
+59,Hisuian,Fire,Rock
+74,Alolan,Rock,Electric
+75,Alolan,Rock,Electric
+76,Alolan,Rock,Electric
+77,Galarian,Fairy,
+78,Galarian,Fairy,Fire
+79,Galarian,Psychic,
+80,Galarian,Poison,Psychic
+83,Galarian,Fighting,
+88,Alolan,Poison,Dark
+89,Alolan,Poison,Dark
+95,Crystal,Rock,Ice
+100,Hisuian,Electric,Grass
+101,Hisuian,Electric,Grass
+103,Alolan,Grass,Dragon
+105,Alolan,Ghost,Fire
+110,Galarian,Poison,Fairy
+122,Galarian,Psychic,Ice
+157,Hisuian,Fire,Ghost
+199,Galarian,Poison,Psychic
+211,Hisuian,Dark,Poison
+215,Hisuian,Fighting,Poison
+222,Galarian,Ghost,
+263,Galarian,Normal,Dark
+264,Galarian,Normal,Dark
+351,Sunny Form,Fire,
+351,Rainy Form,Water,
+351,Snowy Farm,Ice,
+413,Sandy Cloak,Bug,Ground
+413,Trash Cloak,Bug,Steel
+421,Sunshine Form,Grass,Fire
+479,Heat,Electric,Fire
+479,Wash,Electric,Water
+479,Frost,Electric,Ice
+479,Fan,Electric,Flying
+479,Mow,Electric,Grass
+492,Sky Forme,Grass,Flying
+493,Fist Plate,Fighting,
+493,Sky Plate,Flying,
+493,Toxic Plate,Poison,
+493,Earth Plate,Ground,
+493,Stone Plate,Rock,
+493,Insect Plate,Bug,
+493,Spooky Plate,Ghost,
+493,Iron Plate,Steel,
+493,Flame Plate,Fire,
+493,Slpash Plate,Water,
+493,Meadow Plate,Grass,
+493,Zap Plate,Electric,
+493,Mind Plate,Psychic,
+493,Icicle Plate,Ice,
+493,Draco Plate,Dragon,
+493,Dread Plate,Dark,
+493,Pixie Plate,Fairy,

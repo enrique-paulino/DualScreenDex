@@ -14,8 +14,8 @@ class PokedexHelper(private val context: Context) :
         const val DATABASE_NAME = "pokedex.db"
         const val DATABASE_VERSION = 6
 
-        private const val CSV_VANILLA = "vanilla.csv"
-        private const val CSV_REGIONAL = "vanilla-regional.csv"
+        private const val CSV_VANILLA = "dex/vanilla_pokedex.csv"
+        private const val CSV_REGIONAL = "dex/vanilla_regional.csv"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -97,8 +97,8 @@ class PokedexHelper(private val context: Context) :
                 val tokens = parseCsvLine(line!!)
 
                 if (tokens.size >= 4) {
-                    val name = tokens[0].trim()
-                    val id = tokens[1].trim().toIntOrNull() ?: 0
+                    val id = tokens[0].trim().toIntOrNull() ?: 0
+                    val name = tokens[1].trim()
 
                     val rawTypes = tokens[2].trim()
                     val typeParts = rawTypes.split(",").map { it.trim() }

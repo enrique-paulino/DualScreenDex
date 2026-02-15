@@ -1,35 +1,29 @@
 package com.enrpau.dualscreendex
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
-import android.media.projection.MediaProjectionManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.core.graphics.toColorInt
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Shader
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.drawable.toDrawable
-import kotlin.random.Random
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     // ui references
     private lateinit var tvName: TextView
@@ -53,117 +47,128 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnBack: com.google.android.material.floatingactionbutton.FloatingActionButton
     private lateinit var rvList: androidx.recyclerview.widget.RecyclerView
     private lateinit var etSearch: com.google.android.material.textfield.TextInputEditText
-    private var currentGen: TypeMatchup.Gen = TypeMatchup.Gen.GEN_6_PLUS // Default
     private lateinit var searchContainer: com.google.android.material.textfield.TextInputLayout
 
-    // minimized tab stuff
     private lateinit var cardBattleTab: androidx.cardview.widget.CardView
     private lateinit var tvBattleTabText: TextView
 
     private lateinit var adapter: PokemonAdapter
-    private lateinit var pokedexHelper: PokedexHelper
 
-    // state tracking
-    private var navigationList: List<Pokemon> = emptyList()
-    private var currentVariantList: List<Pokemon> = emptyList()
-    private var selectedIndex: Int = 0
-    private var currentVariantIndex: Int = 0
-
-    // data sources
-    private var allPokemonCache: List<Pokemon> = emptyList() // full db
-    private var battleList: List<Pokemon> = emptyList()      // live scanner data
-
-    // flags
-    private var isViewingBattleMode: Boolean = false // true = scanner data, false = pokedex data
-
-    data class MatchupData(val type: PokemonType, val multiplier: Double)
-
-    private val projectionManager: MediaProjectionManager by lazy {
-        getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-    }
-
-    private val startMediaProjection = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK && result.data != null) {
-            startScreenCaptureService(result.resultCode, result.data!!)
-        } else {
-            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private val pokemonReceiver = object : android.content.BroadcastReceiver() {
+    private val pokemonReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val found = intent.getBooleanExtra("FOUND", false)
-
-            // nothing found, hide the tab
             if (!found) {
-                battleList = emptyList()
-                cardBattleTab.visibility = View.GONE
+                viewModel.onScanResult(null, null, null, null)
                 return
             }
-
-            // found something
-            val names = intent.getStringArrayListExtra("NAMES") ?: return
-            val ids = intent.getIntegerArrayListExtra("IDS")
-            val type1s = intent.getStringArrayListExtra("TYPE1S") ?: return
-            val type2s = intent.getStringArrayListExtra("TYPE2S") ?: return
-
-            val scannedList = ArrayList<Pokemon>()
-            for (i in names.indices) {
-                val t1 = PokemonType.fromString(type1s[i])
-                val t2 = PokemonType.fromString(type2s[i])
-                val pId = if (ids != null && ids.size > i) ids[i] else 0
-                scannedList.add(Pokemon(names[i], pId, t1, t2, null))
-            }
-
-            if (scannedList.isNotEmpty()) {
-                battleList = scannedList
-
-                // prep the tab ui (text/color) just in case
-                val combinedNames = battleList.joinToString(" & ") { it.name.replaceFirstChar { c -> c.uppercase() } }
-                tvBattleTabText.text = combinedNames
-
-                val typeColor = battleList[0].type1.colorHex
-                cardBattleTab.setCardBackgroundColor(typeColor)
-                tvBattleTabText.setTextColor(Color.WHITE)
-
-                // don't show tab if we're already looking at the battle screen
-                if (containerBattle.visibility == View.VISIBLE && isViewingBattleMode) {
-                    cardBattleTab.visibility = View.GONE
-                } else {
-                    cardBattleTab.visibility = View.VISIBLE
-                }
-
-                // update main screen if we're live
-                if (isViewingBattleMode) {
-                    val currentNames = navigationList.map { it.name }
-                    val newNames = battleList.map { it.name }
-
-                    if (currentNames != newNames) {
-                        Log.d("DualDex", "Live Update: $newNames")
-                        navigationList = battleList
-                        selectedIndex = 0
-                        refreshDisplay()
-                    }
-                }
-            }
+            viewModel.onScanResult(
+                intent.getStringArrayListExtra("NAMES"),
+                intent.getIntegerArrayListExtra("IDS"),
+                intent.getStringArrayListExtra("TYPE1S"),
+                intent.getStringArrayListExtra("TYPE2S")
+            )
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.loadTheme(this)
-
-        pokedexHelper = PokedexHelper(this)
-        allPokemonCache = pokedexHelper.getAllPokemon()
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        searchContainer = findViewById(R.id.searchContainer)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // grab views
+        initViews()
+
+        rvList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        adapter = PokemonAdapter(emptyList()) { selectedPokemon ->
+            viewModel.onPokemonSelectedFromList(selectedPokemon)
+            hideKeyboard()
+        }
+        rvList.adapter = adapter
+
+        setupListeners()
+        loadSettings()
+
+        viewModel.displayedPokemon.observeForeverSafe { pokemon ->
+            updateCardUI(pokemon)
+        }
+
+        viewModel.pokedexList.observeForeverSafe { list ->
+            adapter.updateList(list)
+        }
+
+        viewModel.isBattleMode.observeForeverSafe { isBattle ->
+            if (isBattle) {
+                containerPokedex.visibility = View.GONE
+                containerBattle.visibility = View.VISIBLE
+                btnBack.visibility = View.VISIBLE
+            } else {
+                containerPokedex.visibility = View.VISIBLE
+                containerBattle.visibility = View.GONE
+                btnBack.visibility = View.GONE
+            }
+        }
+
+        viewModel.prevPokemonName.observeForeverSafe { name ->
+            tvPrevName.text = name.replaceFirstChar { it.uppercase() }
+        }
+
+        viewModel.nextPokemonName.observeForeverSafe { name ->
+            tvNextName.text = name.replaceFirstChar { it.uppercase() }
+        }
+
+        viewModel.isPrevButtonVisible.observeForeverSafe { visible ->
+            navLeftBtn.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        }
+
+        viewModel.isNextButtonVisible.observeForeverSafe { visible ->
+            navRightBtn.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        }
+
+        viewModel.showBattleTab.observeForeverSafe { show ->
+            cardBattleTab.visibility = if (show) View.VISIBLE else View.GONE
+        }
+
+        viewModel.battleTabText.observeForeverSafe { text ->
+            tvBattleTabText.text = text
+        }
+
+        viewModel.battleTabColor.observeForeverSafe { color ->
+            cardBattleTab.setCardBackgroundColor(color)
+            tvBattleTabText.setTextColor(Color.WHITE)
+        }
+
+        viewModel.weaknessList.observeForeverSafe { list ->
+            populateSmartGrid(gridWeak, list)
+            lblWeak.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+            gridWeak.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+        viewModel.resistanceList.observeForeverSafe { list ->
+            populateSmartGrid(gridResist, list)
+            lblResist.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+            gridResist.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+        if (!isAccessibilityServiceEnabled()) {
+            android.widget.Toast.makeText(this, "Please enable DualDex in Accessibility Settings", android.widget.Toast.LENGTH_LONG).show()
+            val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            startActivity(intent)
+        } else {
+            android.widget.Toast.makeText(this, "Scanner Ready", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun isAccessibilityServiceEnabled(): Boolean {
+        val prefString = android.provider.Settings.Secure.getString(
+            contentResolver,
+            android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        return prefString?.contains("$packageName/$packageName.DualDexAccessibilityService") == true
+    }
+
+    private fun initViews() {
         tvName = findViewById(R.id.tvTargetName)
         tvId = findViewById(R.id.tvTargetId)
         layoutTypes = findViewById(R.id.layoutTargetTypes)
@@ -185,201 +190,46 @@ class MainActivity : AppCompatActivity() {
         rvList = findViewById(R.id.rvPokemonList)
         etSearch = findViewById(R.id.etSearch)
         searchContainer = findViewById(R.id.searchContainer)
-
         cardBattleTab = findViewById(R.id.cardBattleTab)
         tvBattleTabText = findViewById(R.id.tvBattleTabText)
-
-        // load up the db
-        val dbHelper = PokedexHelper(this)
-        allPokemonCache = dbHelper.getAllPokemon()
-        updateUI("", 0, PokemonType.NORMAL, PokemonType.NORMAL)
-
-        // setup list
-        rvList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        adapter = PokemonAdapter(allPokemonCache) { selectedPokemon ->
-            // clicked a dex item, show static info
-            isViewingBattleMode = false
-            navigationList = allPokemonCache
-
-            selectedIndex = navigationList.indexOfFirst {
-                it.name == selectedPokemon.name && it.variantLabel == selectedPokemon.variantLabel
-            }
-            if (selectedIndex == -1) selectedIndex = 0
-
-            switchToBattleModeView()
-            refreshDisplay()
-
-            // show tab if we have a background battle running
-            if (battleList.isNotEmpty()) {
-                cardBattleTab.visibility = View.VISIBLE
-            }
-        }
-        rvList.adapter = adapter
-
-        // load gen number
-        val prefs = getSharedPreferences("DualDexPrefs", Context.MODE_PRIVATE)
-        val savedGenName = prefs.getString("SELECTED_GEN", TypeMatchup.Gen.GEN_6_PLUS.name)
-        currentGen = try {
-            TypeMatchup.Gen.valueOf(savedGenName ?: "GEN_6_PLUS")
-        } catch (e: Exception) {
-            TypeMatchup.Gen.GEN_6_PLUS
-        }
-
-        // tab click
-        cardBattleTab.setOnClickListener {
-            // clicked the tab, switch to live scan data
-            if (battleList.isNotEmpty()) {
-                isViewingBattleMode = true
-                navigationList = battleList
-                selectedIndex = 0
-
-                switchToBattleModeView()
-                refreshDisplay()
-            }
-        }
-
-        // variant toggle button
-        btnVariantToggle.setOnClickListener {
-            cycleVariant()
-        }
-
-        // settings button
-        searchContainer.setEndIconOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        }
-
-        // listeners
-        etSearch.addTextChangedListener(object : android.text.TextWatcher {
-            override fun afterTextChanged(s: android.text.Editable?) { adapter.filter(s.toString().trim()) }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
-        applyThemeColors()
-
-        btnBack.setOnClickListener { switchToListMode() }
-        navLeftBtn.setOnClickListener { cycleSelection(-1) }
-        navRightBtn.setOnClickListener { cycleSelection(1) }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_root)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
-        tvName.post {
-            val captureIntent = projectionManager.createScreenCaptureIntent()
-            startMediaProjection.launch(captureIntent)
+    private fun setupListeners() {
+        cardBattleTab.setOnClickListener { viewModel.onBattleTabClicked() }
+        btnVariantToggle.setOnClickListener { viewModel.onVariantToggleClicked() }
+        btnBack.setOnClickListener { viewModel.onBackToListClicked() }
+        navLeftBtn.setOnClickListener { viewModel.onPrevClicked() }
+        navRightBtn.setOnClickListener { viewModel.onNextClicked() }
+
+        searchContainer.setEndIconOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
-    }
 
-    private fun refreshDisplay() {
-        if (navigationList.isEmpty()) return
-
-        if (selectedIndex < 0) selectedIndex = 0
-        if (selectedIndex >= navigationList.size) selectedIndex = navigationList.size - 1
-
-        val current = navigationList[selectedIndex]
-        updateUI(current.name, current.id, current.type1, current.type2 ?: PokemonType.UNKNOWN, current.variantLabel)
-        updateNavigationHeader()
-    }
-
-    private fun cycleVariant() {
-        if (currentVariantList.size <= 1) return
-
-        currentVariantIndex = (currentVariantIndex + 1) % currentVariantList.size
-        val p = currentVariantList[currentVariantIndex]
-        updateUI(p.name, p.id, p.type1, p.type2 ?: PokemonType.UNKNOWN, p.variantLabel)
-    }
-
-    private fun cycleSelection(direction: Int) {
-        if (navigationList.size <= 1) return
-
-        val newIndex = selectedIndex + direction
-
-        if (isViewingBattleMode) {
-            // battle mode doesn't loop
-            if (newIndex >= 0 && newIndex < navigationList.size) {
-                selectedIndex = newIndex
-                refreshDisplay()
+        etSearch.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) {
+                viewModel.onSearchQuery(s.toString().trim())
             }
-        } else {
-            // dex mode loops around
-            if (newIndex < 0) {
-                selectedIndex = navigationList.size - 1
-            } else if (newIndex >= navigationList.size) {
-                selectedIndex = 0
-            } else {
-                selectedIndex = newIndex
-            }
-            refreshDisplay()
-        }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
-    private fun updateNavigationHeader() {
-        if (navigationList.size <= 1) {
-            navLeftBtn.visibility = View.INVISIBLE
-            navRightBtn.visibility = View.INVISIBLE
-            return
-        }
-
-        // left arrow
-        if (isViewingBattleMode && selectedIndex <= 0) {
-            navLeftBtn.visibility = View.INVISIBLE
-        } else {
-            navLeftBtn.visibility = View.VISIBLE
-            val prevIndex = if (selectedIndex - 1 < 0) navigationList.size - 1 else selectedIndex - 1
-            tvPrevName.text = navigationList[prevIndex].name.replaceFirstChar { it.uppercase() }
-        }
-
-        // right arrow
-        if (isViewingBattleMode && selectedIndex >= navigationList.size - 1) {
-            navRightBtn.visibility = View.INVISIBLE
-        } else {
-            navRightBtn.visibility = View.VISIBLE
-            val nextIndex = if (selectedIndex + 1 >= navigationList.size) 0 else selectedIndex + 1
-            tvNextName.text = navigationList[nextIndex].name.replaceFirstChar { it.uppercase() }
-        }
-    }
-
-    private fun updateUI(name: String, id: Int, rawType1: PokemonType, rawType2: PokemonType, startVariant: String? = null) {
+    private fun updateCardUI(pokemon: Pokemon) {
         val theme = ThemeManager.currentTheme
+        val displayBaseColor = pokemon.type1.colorHex
+        val cleanName = pokemon.name.replaceFirstChar { it.uppercase() }
+        val displayName = if (pokemon.variantLabel != null) "$cleanName (${pokemon.variantLabel})" else cleanName
 
-        // check if new pokemon or variant
-        if (currentVariantList.isEmpty() || !currentVariantList[0].name.equals(name, ignoreCase = true)) {
-            currentVariantList = pokedexHelper.getVariantsFor(name)
-
-            val targetIndex = currentVariantList.indexOfFirst { it.variantLabel == startVariant }
-            currentVariantIndex = if (targetIndex != -1) targetIndex else 0
-        }
-
-        val activePokemon = if (currentVariantList.isNotEmpty() && currentVariantList.indices.contains(currentVariantIndex)) {
-            currentVariantList[currentVariantIndex]
-        } else {
-            Pokemon(name, id, rawType1, rawType2, startVariant)
-        }
-
-        val displayType1 = activePokemon.type1
-        val displayType2 = activePokemon.type2 ?: PokemonType.UNKNOWN
-        val displayBaseColor = displayType1.colorHex
-
-        tvName.text = activePokemon.name.replaceFirstChar { it.uppercase() }
-
-        // show variant name in id tag
-        if (activePokemon.variantLabel != null) {
-            tvId.text = String.format("#%03d (%s)", activePokemon.id, activePokemon.variantLabel)
-        } else {
-            tvId.text = String.format("#%03d", activePokemon.id)
-        }
-
+        tvName.text = displayName
+        tvId.text = String.format("#%03d", pokemon.id)
         tvName.setTextColor(theme.headerTextColor)
         tvId.setTextColor(theme.subTextColor)
-
-        // header card
-        val headerParams = cardHeader.layoutParams as android.view.ViewGroup.MarginLayoutParams
-        headerParams.setMargins(32, 32, 32, 16)
-        cardHeader.layoutParams = headerParams
 
         val headerColor = when (theme.id) {
             "red" -> Color.TRANSPARENT
@@ -387,166 +237,54 @@ class MainActivity : AppCompatActivity() {
             "oled" -> Color.BLACK
             else -> theme.windowBackground
         }
-
         cardHeader.setCardBackgroundColor(headerColor)
         cardHeader.radius = theme.cardCornerRadius
+        cardData.radius = theme.cardCornerRadius
         cardHeader.cardElevation = if (theme.id == "dynamic") 8f else 0f
 
-        // battle view screen
-        val battleParams = cardData.layoutParams as android.view.ViewGroup.MarginLayoutParams
-        battleParams.setMargins(32, 0, 32, 32)
-        cardData.layoutParams = battleParams
-        cardData.radius = theme.cardCornerRadius
-        val innerLayout = cardData.getChildAt(0)
-        innerLayout.background = null
-
         if (theme.isRetroScreen) {
-            containerBattle.background = ThemeManager.createScanlineDrawable(this, withBorder = true)
-            containerBattle.setPadding(24, 24, 24, 24)
+            containerBattle.background = ThemeManager.createScanlineDrawable(this, true)
             cardData.setCardBackgroundColor(Color.TRANSPARENT)
             cardData.cardElevation = 0f
-            innerLayout.setPadding(0, 16, 0, 16)
         } else {
-            if (theme.isGradientBg) {
-                containerBattle.background = null
-            } else if (theme.id == "dynamic") {
-                val pastelColor = displayBaseColor.blendWithWhite(0.9f)
-                containerBattle.setBackgroundColor(pastelColor)
+            containerBattle.background = null
+            if (theme.id == "dynamic") {
+                containerBattle.setBackgroundColor(displayBaseColor.blendWithWhite(0.9f))
             } else {
                 containerBattle.setBackgroundColor(theme.windowBackground)
             }
-            containerBattle.setPadding(0, 0, 0, 0)
             cardData.setCardBackgroundColor(theme.gridBackgroundColor)
             cardData.cardElevation = if (theme.id == "dynamic") 4f else 0f
-            innerLayout.setPadding(16, 16, 16, 16)
         }
 
-        // variant button
-        if (currentVariantList.size > 1) {
+        if (viewModel.hasVariants()) {
             btnVariantToggle.visibility = View.VISIBLE
-
-            val nextIndex = (currentVariantIndex + 1) % currentVariantList.size
-            val nextForm = currentVariantList[nextIndex]
-            val label = nextForm.variantLabel ?: "Normal"
-
-            btnVariantToggle.text = "Switch to $label"
-
+            btnVariantToggle.text = "Switch to ${viewModel.getNextVariantName()}"
             btnVariantToggle.setTextColor(theme.labelTextColor)
             btnVariantToggle.setStrokeColor(android.content.res.ColorStateList.valueOf(theme.labelTextColor))
         } else {
             btnVariantToggle.visibility = View.GONE
         }
 
-        // labels
         lblWeak.setTextColor(theme.labelTextColor)
         lblResist.setTextColor(theme.labelTextColor)
-        lblWeak.setPadding(0, 0, 0, 0)
-        gridWeak.setPadding(0, 0, 0, 0)
-        lblResist.setPadding(0, 0, 0, 0)
-        gridResist.setPadding(0, 0, 0, 0)
-
-        // navigation
-        val buttonColor = if (theme.id == "red") theme.searchBoxColor else headerColor
-        btnBack.backgroundTintList = android.content.res.ColorStateList.valueOf(buttonColor)
-        val arrowColor = if (theme.id == "oled" || theme.id == "red") Color.WHITE else theme.headerTextColor
-        btnBack.setColorFilter(arrowColor)
-
-        val navTextColor = if (theme.id == "oled") Color.LTGRAY else theme.subTextColor
-        tvPrevName.setTextColor(navTextColor)
-        tvNextName.setTextColor(navTextColor)
-
-        fun recolorNav(layout: LinearLayout) {
-            for (i in 0 until layout.childCount) {
-                val v = layout.getChildAt(i)
-                if (v is TextView) v.setTextColor(navTextColor)
-            }
-        }
-        recolorNav(navLeftBtn)
-        recolorNav(navRightBtn)
 
         layoutTypes.removeAllViews()
-        addFullWidthTypeBadge(layoutTypes, displayType1)
-        if (displayType2 != PokemonType.UNKNOWN) {
-            addFullWidthTypeBadge(layoutTypes, displayType2)
-        }
-
-        val weaknessList = ArrayList<MatchupData>()
-        val resistanceList = ArrayList<MatchupData>()
-
-        for (attacker in PokemonType.entries) {
-            if (attacker == PokemonType.UNKNOWN) continue
-            val mult = TypeMatchup.getMultiplier(attacker, displayType1, currentGen) *
-                    (if (displayType2 != PokemonType.UNKNOWN) TypeMatchup.getMultiplier(attacker, displayType2, currentGen) else 1.0)
-
-            if (mult > 1.0) weaknessList.add(MatchupData(attacker, mult))
-            if (mult < 1.0) resistanceList.add(MatchupData(attacker, mult))
-        }
-
-        weaknessList.sortByDescending { it.multiplier }
-        resistanceList.sortBy { it.multiplier }
-
-        populateSmartGrid(gridWeak, weaknessList)
-        populateSmartGrid(gridResist, resistanceList)
-
-        lblWeak.visibility = if (weaknessList.isNotEmpty()) View.VISIBLE else View.GONE
-        gridWeak.visibility = if (weaknessList.isNotEmpty()) View.VISIBLE else View.GONE
-        lblResist.visibility = if (resistanceList.isNotEmpty()) View.VISIBLE else View.GONE
-        gridResist.visibility = if (resistanceList.isNotEmpty()) View.VISIBLE else View.GONE
-    }
-
-    private fun startScreenCaptureService(resultCode: Int, data: Intent) {
-        val intent = Intent(this, ScreenCaptureService::class.java).apply {
-            action = "START_CAPTURE"
-            putExtra("RESULT_CODE", resultCode)
-            putExtra("DATA", data)
-        }
-        startForegroundService(intent)
-    }
-
-    private fun switchToBattleModeView() {
-        if (containerBattle.visibility == View.VISIBLE) {
-            // already visible, hide tab cause we're looking at it
-            cardBattleTab.visibility = View.GONE
-            return
-        }
-
-        containerPokedex.visibility = View.GONE
-        containerBattle.visibility = View.VISIBLE
-        cardBattleTab.visibility = View.GONE // hide tab on open
-        btnBack.visibility = View.VISIBLE
-
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(etSearch.windowToken, 0)
-    }
-
-    private fun switchToListMode() {
-        containerPokedex.visibility = View.VISIBLE
-        containerBattle.visibility = View.GONE
-        btnBack.visibility = View.GONE
-
-        // show tab if battle is still active
-        if (battleList.isNotEmpty()) {
-            cardBattleTab.visibility = View.VISIBLE
+        addFullWidthTypeBadge(layoutTypes, pokemon.type1)
+        if (pokemon.type2 != null && pokemon.type2 != PokemonType.UNKNOWN) {
+            addFullWidthTypeBadge(layoutTypes, pokemon.type2)
         }
     }
 
-    private fun populateSmartGrid(container: LinearLayout, list: List<MatchupData>) {
-        container.removeAllViews()
-        val rows = list.chunked(3)
-        for (rowItems in rows) {
-            val rowLayout = LinearLayout(this)
-            rowLayout.orientation = LinearLayout.HORIZONTAL
-            rowLayout.weightSum = rowItems.size.toFloat()
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            params.setMargins(0, 0, 0, 16)
-            rowLayout.layoutParams = params
-            for (data in rowItems) {
-                val badge = createWeaknessBadgeView(data.type, data.multiplier)
-                val itemParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                itemParams.setMargins(8, 0, 8, 0)
-                rowLayout.addView(badge, itemParams)
-            }
-            container.addView(rowLayout)
+    private fun loadSettings() {
+        viewModel.refreshSettings()
+        applyThemeColors()
+        if (::adapter.isInitialized) {
+            val currentMechanics = com.enrpau.dualscreendex.data.RomManager.currentProfile.baseMechanics
+            val currentTheme = ThemeManager.currentTheme
+            adapter.updateSettings(currentMechanics, currentTheme)
+            val freshList = viewModel.repository.getAllPokemon()
+            adapter.updateList(freshList)
         }
     }
 
@@ -554,45 +292,37 @@ class MainActivity : AppCompatActivity() {
         val theme = ThemeManager.currentTheme
         val root = findViewById<View>(R.id.main_root)
 
-        // background
-        if (theme.isGradientBg) {  // magical theme
+        if (theme.isGradientBg) {
             root.background = ThemeManager.StarryDrawable()
             window.statusBarColor = "#E1BEE7".toColorInt()
-            containerPokedex.setBackgroundColor(Color.TRANSPARENT)
         } else {
             root.background = null
             root.setBackgroundColor(theme.windowBackground)
-            containerPokedex.setBackgroundColor(theme.contentBackground)
             window.statusBarColor = theme.windowBackground
         }
 
-        // special pokedex theme
         if (theme.isRetroScreen) {
             containerPokedex.background = ThemeManager.createScanlineDrawable(this, withBorder = true)
             containerPokedex.setPadding(24, 24, 24, 24)
         } else {
+            containerPokedex.background = null
             if (!theme.isGradientBg) {
                 containerPokedex.setBackgroundColor(theme.contentBackground)
             }
             containerPokedex.setPadding(0, 0, 0, 0)
         }
 
-        // search bar
         val searchBox = findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.searchContainer)
         val etSearch = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSearch)
 
-        val iconColor = if (theme.id == "oled" || theme.id == "red") Color.WHITE else Color.parseColor("#5D4037")
-
         searchBox.boxBackgroundColor = theme.searchBoxColor
-        searchBox.setBoxStrokeColorStateList(android.content.res.ColorStateList.valueOf(theme.searchStrokeColor))
-        searchBox.defaultHintTextColor = android.content.res.ColorStateList.valueOf(theme.searchHintColor)
-        searchBox.setEndIconTintList(android.content.res.ColorStateList.valueOf(iconColor))
         etSearch.setTextColor(theme.searchTextColor)
         etSearch.setHintTextColor(theme.searchHintColor)
-
-        searchBox.setBoxCornerRadii(theme.searchCornerRadius, theme.searchCornerRadius, theme.searchCornerRadius, theme.searchCornerRadius)
+        searchBox.defaultHintTextColor = android.content.res.ColorStateList.valueOf(theme.searchHintColor)
+        searchBox.setBoxStrokeColorStateList(android.content.res.ColorStateList.valueOf(theme.searchStrokeColor))
         searchBox.boxStrokeWidth = theme.searchStrokeWidth
         searchBox.boxStrokeWidthFocused = theme.searchStrokeWidth + 2
+        searchBox.setBoxCornerRadii(theme.searchCornerRadius, theme.searchCornerRadius, theme.searchCornerRadius, theme.searchCornerRadius)
 
         val params = searchBox.layoutParams as android.view.ViewGroup.MarginLayoutParams
         val density = resources.displayMetrics.density
@@ -600,94 +330,101 @@ class MainActivity : AppCompatActivity() {
         params.setMargins(marginPx, marginPx / 2, marginPx, marginPx / 2)
         searchBox.layoutParams = params
 
+        val iconColor = if (theme.id == "oled" || theme.id == "red") Color.WHITE else "#5D4037".toColorInt()
+        searchBox.setEndIconTintList(android.content.res.ColorStateList.valueOf(iconColor))
+
         if (::adapter.isInitialized) {
-            adapter.updateSettings(currentGen, theme)
+            val currentMechanics = com.enrpau.dualscreendex.data.RomManager.currentProfile.baseMechanics
+            adapter.updateSettings(currentMechanics, theme)
         }
-        if (navigationList.isNotEmpty()) refreshDisplay()
     }
-    private fun createWeaknessBadgeView(type: PokemonType, mult: Double): View {
-        val inflater = android.view.LayoutInflater.from(this)
-        val view = inflater.inflate(R.layout.badge_weakness, null, false)
-        val tvType = view.findViewById<TextView>(R.id.tvBadgeType)
-        val tvMult = view.findViewById<TextView>(R.id.tvBadgeMult)
-        tvType.text = type.displayName
-        val multText = when(mult) {
-            0.5 -> "½"
-            0.25 -> "¼"
-            0.0 -> "0"
-            else -> mult.toInt().toString()
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(etSearch.windowToken, 0)
+    }
+
+    data class MatchupData(val type: PokemonType, val multiplier: Double)
+    private fun Int.blendWithWhite(ratio: Float): Int = ColorUtils.blendARGB(this, Color.WHITE, ratio)
+
+    private fun populateSmartGrid(container: LinearLayout, list: List<MatchupData>) {
+        container.removeAllViews()
+        val rows = list.chunked(3)
+        for (rowItems in rows) {
+            val rowLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                weightSum = rowItems.size.toFloat()
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    setMargins(0, 0, 0, 16)
+                }
+            }
+            for (data in rowItems) {
+                val badge = createWeaknessBadgeView(data.type, data.multiplier)
+                rowLayout.addView(badge, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                    setMargins(8, 0, 8, 0)
+                })
+            }
+            container.addView(rowLayout)
         }
-        tvMult.text = "× $multText"
-        tvType.setBackgroundColor(type.colorHex)
-        tvMult.setBackgroundColor(type.colorHex)
+    }
+
+    private fun createWeaknessBadgeView(type: PokemonType, mult: Double): View {
+        val view = layoutInflater.inflate(R.layout.badge_weakness, null, false)
+        view.findViewById<TextView>(R.id.tvBadgeType).apply {
+            text = type.displayName
+            setBackgroundColor(type.colorHex)
+        }
+        view.findViewById<TextView>(R.id.tvBadgeMult).apply {
+            text = "× ${if(mult == 0.5) "½" else if(mult == 0.25) "¼" else if(mult == 0.0) "0" else mult.toInt().toString()}"
+            setBackgroundColor(type.colorHex)
+        }
         return view
     }
 
     private fun addFullWidthTypeBadge(container: LinearLayout, type: PokemonType) {
-        val tv = TextView(this)
-        tv.text = type.displayName.uppercase()
-        tv.setTextColor(Color.WHITE)
-        tv.setTypeface(null, android.graphics.Typeface.BOLD)
-        tv.gravity = android.view.Gravity.CENTER
-        tv.textSize = 14f
-        tv.setBackgroundColor(type.colorHex)
-        val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
-        params.setMargins(1, 0, 1, 0)
-        container.addView(tv, params)
+        val tv = TextView(this).apply {
+            text = type.displayName.uppercase()
+            setTextColor(Color.WHITE)
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            gravity = android.view.Gravity.CENTER
+            textSize = 14f
+            setBackgroundColor(type.colorHex)
+        }
+        container.addView(tv, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
+            setMargins(1, 0, 1, 0)
+        })
     }
 
-    private fun Int.blendWithWhite(ratio: Float): Int {
-        return ColorUtils.blendARGB(this, Color.WHITE, ratio)
+    // helper to force updates even when paused or in background
+    private fun <T> androidx.lifecycle.LiveData<T>.observeForeverSafe(observer: (T) -> Unit) {
+        val wrapper = androidx.lifecycle.Observer<T> { data ->
+            observer(data)
+        }
+        this.observeForever(wrapper)
+
+        lifecycle.addObserver(object : androidx.lifecycle.LifecycleEventObserver {
+            override fun onStateChanged(source: androidx.lifecycle.LifecycleOwner, event: androidx.lifecycle.Lifecycle.Event) {
+                if (event == androidx.lifecycle.Lifecycle.Event.ON_DESTROY) {
+                    this@observeForeverSafe.removeObserver(wrapper)
+                }
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
-        reloadSettings()
-        // register receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(pokemonReceiver, android.content.IntentFilter("POKEMON_DETECTED"))
+        loadSettings()
 
-        // tell scanner to wake up
-        val intent = Intent(this, ScreenCaptureService::class.java).apply {
-            action = "RESUME"
-        }
-        // using startService to send command to existing service
-        startService(intent)
+        val filter = IntentFilter("com.enrpau.dualscreendex.POKEMON_DETECTED")
+        ContextCompat.registerReceiver(this, pokemonReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onPause() {
         super.onPause()
-        // unregister receiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(pokemonReceiver)
-
-        // pause scanner to save battery
-        val intent = Intent(this, ScreenCaptureService::class.java).apply {
-            action = "PAUSE"
-        }
-        startService(intent)
     }
 
-    private fun reloadSettings() {
-        val prefs = getSharedPreferences("DualDexPrefs", Context.MODE_PRIVATE)
-
-        val savedGenName = prefs.getString("SELECTED_GEN", TypeMatchup.Gen.GEN_6_PLUS.name)
-        val newGen = try {
-            TypeMatchup.Gen.valueOf(savedGenName ?: "GEN_6_PLUS")
-        } catch (e: Exception) {
-            TypeMatchup.Gen.GEN_6_PLUS
-        }
-        currentGen = newGen
-
-        ThemeManager.loadTheme(this)
-        applyThemeColors()
-
-        // update adapter to fix generation type differences
-        if (::adapter.isInitialized) {
-            adapter.updateSettings(currentGen, ThemeManager.currentTheme)
-        }
-
-        // update individual pokemon view
-        if (navigationList.isNotEmpty()) {
-            refreshDisplay()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(pokemonReceiver)
     }
 }

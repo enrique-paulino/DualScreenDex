@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.drawable.GradientDrawable
 import androidx.core.graphics.ColorUtils
+import com.enrpau.dualscreendex.data.RomProfile
 
 class PokemonAdapter(
     private var fullList: List<Pokemon>,
@@ -15,7 +16,7 @@ class PokemonAdapter(
 ) : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
 
     private var filteredList = fullList.toMutableList()
-    private var currentGen: TypeMatchup.Gen = TypeMatchup.Gen.GEN_6_PLUS
+    private var currentMechanics: RomProfile.Mechanics = RomProfile.Mechanics.GEN_6_PLUS
     private var currentTheme: AppTheme = ThemeManager.currentTheme
 
     inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,19 +33,22 @@ class PokemonAdapter(
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
         val pokemon = filteredList[position]
 
+        val cleanName = pokemon.name.replaceFirstChar { it.uppercase() }
+
         val displayName = if (pokemon.variantLabel != null) {
-            "${pokemon.name} (${pokemon.variantLabel})"
+            "$cleanName (${pokemon.variantLabel})"
         } else {
-            pokemon.name
+            cleanName
         }
 
-        holder.tvName.text = displayName.replaceFirstChar { it.uppercase() }
-        holder.tvId.text = String.format("#%03d", pokemon.id)  // turns 1 into #001
+        holder.tvName.text = displayName
+        holder.tvId.text = String.format("#%03d", pokemon.id)
 
         holder.tvName.setTextColor(currentTheme.listTextColor)
         holder.tvId.setTextColor(ColorUtils.setAlphaComponent(currentTheme.listTextColor, 128))
 
-        val (t1, t2) = GenerationHelper.getGenSpecificTypes(pokemon, currentGen)
+        val t1 = pokemon.type1
+        val t2 = pokemon.type2 ?: PokemonType.UNKNOWN
 
         holder.typeContainer.removeAllViews()
         addMiniBadge(holder.typeContainer, t1)
@@ -57,9 +61,16 @@ class PokemonAdapter(
 
     override fun getItemCount() = filteredList.size
 
-    fun updateSettings(newGen: TypeMatchup.Gen, newTheme: AppTheme) {
-        this.currentGen = newGen
-        this.currentTheme = newTheme
+    fun updateList(newList: List<Pokemon>) {
+        filteredList.clear()
+        filteredList = ArrayList(newList)
+        fullList = ArrayList(newList)
+        notifyDataSetChanged()
+    }
+
+    fun updateSettings(mechanics: RomProfile.Mechanics, theme: AppTheme) {
+        this.currentMechanics = mechanics
+        this.currentTheme = theme
         notifyDataSetChanged()
     }
 

@@ -1,13 +1,15 @@
 package com.enrpau.dualscreendex
 
+import com.enrpau.dualscreendex.data.RomProfile
+
 object GenerationHelper {
 
-    fun getGenSpecificTypes(pokemon: Pokemon, gen: TypeMatchup.Gen): Pair<PokemonType, PokemonType> {
+    fun getGenSpecificTypes(pokemon: Pokemon, mechanics: RomProfile.Mechanics): Pair<PokemonType, PokemonType> {
         var t1 = pokemon.type1
         var t2 = pokemon.type2 ?: PokemonType.UNKNOWN
 
         // gen 1
-        if (gen == TypeMatchup.Gen.GEN_1) {
+        if (mechanics == RomProfile.Mechanics.GEN_1) {
             // magnemite/magneton was pure electric in gen 1
             if (pokemon.name.equals("magnemite", true) ||
                 pokemon.name.equals("magneton", true)) {
@@ -16,7 +18,7 @@ object GenerationHelper {
         }
 
         // gen 1-5
-        if (gen != TypeMatchup.Gen.GEN_6_PLUS) {
+        if (mechanics != RomProfile.Mechanics.GEN_6_PLUS) {
 
             if (t1 == PokemonType.FAIRY) {
                 t1 = PokemonType.NORMAL

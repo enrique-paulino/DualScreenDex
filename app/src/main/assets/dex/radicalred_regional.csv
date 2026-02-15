@@ -1,0 +1,175 @@
+﻿id,region,type1,type2
+6,Mega-X,Fire,Dragon
+6,Mega-Y,Fire,Flying
+19,Alola,Dark,Normal
+20,Alola,Dark,Normal
+25,Surfing,Electric,Water
+25,Flying,Electric,Flying
+25,Libre,Electric,Fighting
+25,Pop-Star,Electric,Fairy
+25,Rock-Star,Electric,Steel
+25,Belle,Electric,Ice
+25,PhD,Electric,Psychic
+26,Alola,Electric,Psychic
+27,Alola,Ice,Steel
+28,Alola,Ice,Steel
+37,Alola,Ice,
+38,Alola,Ice,Fairy
+50,Alola,Ground,Steel
+51,Alola,Ground,Steel
+52,Alola,Dark,
+52,Galar,Steel,
+53,Alola,Dark,
+58,Hisui,Fire,Rock
+59,Hisui,Fire,Rock
+74,Alola,Rock,Electric
+75,Alola,Rock,Electric
+76,Alola,Rock,Electric
+77,Galar,Fire,Fairy
+78,Galar,Fire,Fairy
+79,Galar,Psychic,
+80,Galar,Poison,Psychic
+83,Galar,Fighting,
+84,Sevii,Fire,Ground
+85,Sevii,Fire,Ground
+88,Alola,Poison,Dark
+89,Alola,Poison,Dark
+100,Hisui,Electric,Grass
+101,Hisui,Electric,Grass
+103,Alola,Grass,Dragon
+105,Alola,Fire,Ghost
+110,Galar,Poison,Fairy
+122,Galar,Ice,Psychic
+127,Mega,Bug,Flying
+128,Paldea-Combat,Fighting,
+128,Paldea-Aqua,Water,Fighting
+128,Paldea-Blaze,Fire,Fighting
+130,Mega,Water,Dark
+143,Mega,Normal,Grass
+144,Galar,Psychic,Flying
+145,Galar,Fighting,Flying
+146,Galar,Dark,Flying
+150,Mega-X,Psychic,Fighting
+150,Mega-Y,Psychic,
+157,Hisui,Fire,Ghost
+181,Mega,Electric,Dragon
+194,Paldea,Poison,Ground
+199,Galar,Psychic,Poison
+211,Hisui,Dark,Poison
+215,Hisui,Poison,Fighting
+216,Sevii,Ghost,
+217,Sevii,Ghost,Fighting
+222,Galar,Ghost,
+226,Sevii,Electric,Poison
+263,Galar,Dark,Normal
+264,Galar,Dark,Normal
+306,Mega,Steel,
+334,Mega,Dragon,Fairy
+349,Sevii,Water,Ground
+350,Sevii,Fairy,Ground
+354,Mega,Ghost,Normal
+359,Mega,Dark,Fairy
+383,Primal,Ground,Fire
+413,Sandy,Bug,Ground
+413,Trash,Bug,Steel
+455,Sevii,Poison,Steel
+458,Sevii,Electric,Poison
+479,Heat,Electric,Fire
+479,Wash,Electric,Water
+479,Frost,Electric,Ice
+479,Fan,Electric,Flying
+479,Mow,Electric,Grass
+483,Origin,Steel,Dragon
+483,Primal,Steel,Dragon
+484,Origin,Water,Dragon
+487,Origin,Ghost,Dragon
+492,Sky,Grass,Flying
+493,Fighting Plate,Fighting,
+493,Flying Plate,Flying,
+493,Poison Plate,Poison,
+493,Ground Plate,Ground,
+493,Rock Plate,Rock,
+493,Bug Plate,Bug,
+493,Ghost Plate,Ghost,
+493,Steel Plate,Steel,
+493,Fire Plate,Fire,
+493,Water Plate,Water,
+493,Grass Plate,Grass,
+493,Electric Plate,Electric,
+493,Psychic Plate,Psychic,
+493,Ice Plate,Ice,
+493,Dragon Plate,Dragon,
+493,Dark Plate,Dark,
+493,Fairy Plate,Fairy,
+503,Hisui,Water,Dark
+522,Sevii,Ice,Electric
+523,Sevii,Ice,Electric
+531,Mega,Normal,Fairy
+549,Hisui,Grass,Fighting
+554,Galar,Ice,
+555,Zen,Fire,Psychic
+555,Galar,Ice,
+555,Galar-Zen,Ice,Fire
+562,Galar,Ground,Ghost
+570,Hisui,Ghost,Normal
+571,Hisui,Ghost,Normal
+618,Galar,Ground,Steel
+628,Hisui,Psychic,Flying
+641,Therian,Flying,
+642,Therian,Electric,Flying
+645,Therian,Ground,Flying
+648,Pirouette,Normal,Fighting
+692,Sevii,Bug,Dark
+693,Sevii,Bug,Dark
+705,Hisui,Dragon,Steel
+706,Hisui,Dragon,Steel
+713,Hisui,Ice,Rock
+714,Sevii,Rock,Ghost
+715,Sevii,Rock,Ghost
+720,Unbound,Psychic,Dark
+724,Hisui,Grass,Fighting
+741,Pom-Pom,Electric,Flying
+741,Pa'u,Psychic,Flying
+741,Sensu,Ghost,Flying
+745,Midnight,Rock,
+745,Dusk,Rock,
+746,School,Water,
+746,Sevii,Ghost,
+746,Sevii-School,Ghost,Dragon
+773,Fighting,Fighting,
+773,Flying,Flying,
+773,Poison,Poison,
+773,Ground,Ground,
+773,Rock,Rock,
+773,Bug,Bug,
+773,Ghost,Ghost,
+773,Steel,Steel,
+773,Fire,Fire,
+773,Water,Water,
+773,Grass,Grass,
+773,Electric,Electric,
+773,Psychic,Psychic,
+773,Ice,Ice,
+773,Dragon,Dragon,
+773,Dark,Dark,
+773,Fairy,Fairy,
+781,Sevii,Water,Grass
+800,Dusk-Mane,Psychic,Steel
+800,Dawn-Wings,Psychic,Ghost
+800,Ultra,Psychic,Dragon
+834,Mega,Water,Fighting
+839,Mega,Steel,Fire
+844,Mega,Ground,Flying
+850,Sevii,Ground,Bug
+851,Sevii,Ground,Bug
+879,Mega,Steel,Fighting
+888,Crowned,Fairy,Steel
+889,Crowned,Fighting,Steel
+892,Rapid-Strike,Fighting,Water
+898,Ice,Psychic,Ice
+898,Shadow,Psychic,Ghost
+919,Sevii,Bug,Dragon
+920,Sevii,Bug,Dragon
+1017,Wellspring,Grass,Water
+1017,Hearthflame,Grass,Fire
+1017,Cornerstone,Grass,Rock

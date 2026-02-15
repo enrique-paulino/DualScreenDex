@@ -15,7 +15,7 @@
         app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
         android:background="#FFFFFF"/>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,84 +26,64 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/lblGenTitle"
+                android:id="@+id/lblProfileTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Game Mechanics"
+                android:text="Game Profiles"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
-                android:id="@+id/lblGenDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select the game generation to adjust type matchups (e.g. Steel resistance changes)."
+                android:text="Select the game version or ROM hack you are playing."
                 android:textSize="14sp"
                 android:layout_marginBottom="16dp"/>
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreateProfile"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="+ Create New Profile"
+                android:textSize="16sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProfiles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="32dp">
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="32dp"/>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardGen6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:cardCornerRadius="12dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="#E0E0E0"
-                    app:cardElevation="0dp">
-                    <TextView
-                        android:id="@+id/txtGen6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Gen 6+ (Modern)"
-                        android:padding="16dp"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
-                </com.google.android.material.card.MaterialCardView>
+            <TextView
+                android:id="@+id/lblScannerTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Scanner Calibration"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardGen25"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:cardCornerRadius="12dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="#E0E0E0"
-                    app:cardElevation="0dp">
-                    <TextView
-                        android:id="@+id/txtGen25"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Gen 2 - 5 (Classic)"
-                        android:padding="16dp"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
-                </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnScanSource"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Scan Screen: TOP"
+                android:textSize="16sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardGen1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="#E0E0E0"
-                    app:cardElevation="0dp">
-                    <TextView
-                        android:id="@+id/txtGen1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Gen 1 (Retro)"
-                        android:padding="16dp"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnScanAlign"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Pokemon Aligned: LEFT"
+                android:textSize="16sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginBottom="32dp"/>
 
             <TextView
                 android:id="@+id/lblThemeTitle"
@@ -210,5 +190,5 @@
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

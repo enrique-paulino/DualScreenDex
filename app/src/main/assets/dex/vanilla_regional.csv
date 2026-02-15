@@ -1,0 +1,71 @@
+id,region,type1,type2
+19,Alolan,dark,normal
+20,Alolan,dark,normal
+26,Alolan,electric,psychic
+27,Alolan,ice,steel
+28,Alolan,ice,steel
+37,Alolan,ice,
+38,Alolan,ice,fairy
+50,Alolan,ground,steel
+51,Alolan,ground,steel
+52,Alolan,dark,
+52,Galarian,steel,
+53,Alolan,dark,
+74,Alolan,rock,electric
+75,Alolan,rock,electric
+76,Alolan,rock,electric
+88,Alolan,poison,dark
+89,Alolan,poison,dark
+103,Alolan,grass,dragon
+105,Alolan,fire,ghost
+110,Galarian,poison,fairy
+122,Galarian,ice,psychic
+263,Galarian,dark,normal
+264,Galarian,dark,normal
+554,Galarian,ice,
+555,Galarian,ice,
+562,Galarian,ground,ghost
+618,Galarian,ground,steel
+79,Galarian,psychic,
+80,Galarian,poison,psychic
+199,Galarian,poison,psychic
+144,Galarian,psychic,flying
+145,Galarian,fighting,flying
+146,Galarian,dark,flying
+58,Hisuian,fire,rock
+59,Hisuian,fire,rock
+100,Hisuian,electric,grass
+101,Hisuian,electric,grass
+157,Hisuian,fire,ghost
+211,Hisuian,dark,poison
+215,Hisuian,fighting,poison
+503,Hisuian,water,dark
+549,Hisuian,grass,fighting
+570,Hisuian,normal,ghost
+571,Hisuian,normal,ghost
+628,Hisuian,psychic,flying
+705,Hisuian,steel,dragon
+706,Hisuian,steel,dragon
+713,Hisuian,ice,rock
+724,Hisuian,grass,fighting
+194,Paldean,poison,ground
+128,Combat,fighting,
+128,Blaze,fighting,fire
+128,Aqua,fighting,water
+493,Fist Plate,Fighting,
+493,Sky Plate,Flying,
+493,Toxic Plate,Poison,
+493,Earth Plate,Ground,
+493,Stone Plate,Rock,
+493,Insect Plate,Bug,
+493,Spooky Plate,Ghost,
+493,Iron Plate,Steel,
+493,Flame Plate,Fire,
+493,Slpash Plate,Water,
+493,Meadow Plate,Grass,
+493,Zap Plate,Electric,
+493,Mind Plate,Psychic,
+493,Icicle Plate,Ice,
+493,Draco Plate,Dragon,
+493,Dread Plate,Dark,
+493,Pixie Plate,Fairy,

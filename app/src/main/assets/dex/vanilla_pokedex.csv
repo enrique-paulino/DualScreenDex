@@ -1,0 +1,1026 @@
+id,name,type1,type2
+1,bulbasaur,grass, poison
+2,ivysaur,grass, poison
+3,venusaur,grass, poison
+4,charmander,fire,
+5,charmeleon,fire,
+6,charizard,fire, flying
+7,squirtle,water,
+8,wartortle,water,
+9,blastoise,water,
+10,caterpie,bug,
+11,metapod,bug,
+12,butterfree,bug, flying
+13,weedle,bug, poison
+14,kakuna,bug, poison
+15,beedrill,bug, poison
+16,pidgey,normal, flying
+17,pidgeotto,normal, flying
+18,pidgeot,normal, flying
+19,rattata,normal,
+20,raticate,normal,
+21,spearow,normal, flying
+22,fearow,normal, flying
+23,ekans,poison,
+24,arbok,poison,
+25,pikachu,electric,
+26,raichu,electric,
+27,sandshrew,ground,
+28,sandslash,ground,
+29,nidoran-f,poison,
+30,nidorina,poison,
+31,nidoqueen,poison, ground
+32,nidoran-m,poison,
+33,nidorino,poison,
+34,nidoking,poison, ground
+35,clefairy,fairy,
+36,clefable,fairy,
+37,vulpix,fire,
+38,ninetales,fire,
+39,jigglypuff,normal, fairy
+40,wigglytuff,normal, fairy
+41,zubat,poison, flying
+42,golbat,poison, flying
+43,oddish,grass, poison
+44,gloom,grass, poison
+45,vileplume,grass, poison
+46,paras,bug, grass
+47,parasect,bug, grass
+48,venonat,bug, poison
+49,venomoth,bug, poison
+50,diglett,ground,
+51,dugtrio,ground,
+52,meowth,normal,
+53,persian,normal,
+54,psyduck,water,
+55,golduck,water,
+56,mankey,fighting,
+57,primeape,fighting,
+58,growlithe,fire,
+59,arcanine,fire,
+60,poliwag,water,
+61,poliwhirl,water,
+62,poliwrath,water, fighting
+63,abra,psychic,
+64,kadabra,psychic,
+65,alakazam,psychic,
+66,machop,fighting,
+67,machoke,fighting,
+68,machamp,fighting,
+69,bellsprout,grass, poison
+70,weepinbell,grass, poison
+71,victreebel,grass, poison
+72,tentacool,water, poison
+73,tentacruel,water, poison
+74,geodude,rock, ground
+75,graveler,rock, ground
+76,golem,rock, ground
+77,ponyta,fire,
+78,rapidash,fire,
+79,slowpoke,water, psychic
+80,slowbro,water, psychic
+81,magnemite,electric, steel
+82,magneton,electric, steel
+83,farfetchd,normal, flying
+84,doduo,normal, flying
+85,dodrio,normal, flying
+86,seel,water,
+87,dewgong,water, ice
+88,grimer,poison,
+89,muk,poison,
+90,shellder,water,
+91,cloyster,water, ice
+92,gastly,ghost, poison
+93,haunter,ghost, poison
+94,gengar,ghost, poison
+95,onix,rock, ground
+96,drowzee,psychic,
+97,hypno,psychic,
+98,krabby,water,
+99,kingler,water,
+100,voltorb,electric,
+101,electrode,electric,
+102,exeggcute,grass, psychic
+103,exeggutor,grass, psychic
+104,cubone,ground,
+105,marowak,ground,
+106,hitmonlee,fighting,
+107,hitmonchan,fighting,
+108,lickitung,normal,
+109,koffing,poison,
+110,weezing,poison,
+111,rhyhorn,ground, rock
+112,rhydon,ground, rock
+113,chansey,normal,
+114,tangela,grass,
+115,kangaskhan,normal,
+116,horsea,water,
+117,seadra,water,
+118,goldeen,water,
+119,seaking,water,
+120,staryu,water,
+121,starmie,water, psychic
+122,mr. mime,psychic, fairy
+123,scyther,bug, flying
+124,jynx,ice, psychic
+125,electabuzz,electric,
+126,magmar,fire,
+127,pinsir,bug,
+128,tauros,normal,
+129,magikarp,water,
+130,gyarados,water, flying
+131,lapras,water, ice
+132,ditto,normal,
+133,eevee,normal,
+134,vaporeon,water,
+135,jolteon,electric,
+136,flareon,fire,
+137,porygon,normal,
+138,omanyte,rock, water
+139,omastar,rock, water
+140,kabuto,rock, water
+141,kabutops,rock, water
+142,aerodactyl,rock, flying
+143,snorlax,normal,
+144,articuno,ice, flying
+145,zapdos,electric, flying
+146,moltres,fire, flying
+147,dratini,dragon,
+148,dragonair,dragon,
+149,dragonite,dragon, flying
+150,mewtwo,psychic,
+151,mew,psychic,
+152,chikorita,grass,
+153,bayleef,grass,
+154,meganium,grass,
+155,cyndaquil,fire,
+156,quilava,fire,
+157,typhlosion,fire,
+158,totodile,water,
+159,croconaw,water,
+160,feraligatr,water,
+161,sentret,normal,
+162,furret,normal,
+163,hoothoot,normal, flying
+164,noctowl,normal, flying
+165,ledyba,bug, flying
+166,ledian,bug, flying
+167,spinarak,bug, poison
+168,ariados,bug, poison
+169,crobat,poison, flying
+170,chinchou,water, electric
+171,lanturn,water, electric
+172,pichu,electric,
+173,cleffa,fairy,
+174,igglybuff,normal, fairy
+175,togepi,fairy,
+176,togetic,fairy, flying
+177,natu,psychic, flying
+178,xatu,psychic, flying
+179,mareep,electric,
+180,flaaffy,electric,
+181,ampharos,electric,
+182,bellossom,grass,
+183,marill,water, fairy
+184,azumarill,water, fairy
+185,sudowoodo,rock,
+186,politoed,water,
+187,hoppip,grass, flying
+188,skiploom,grass, flying
+189,jumpluff,grass, flying
+190,aipom,normal,
+191,sunkern,grass,
+192,sunflora,grass,
+193,yanma,bug, flying
+194,wooper,water, ground
+195,quagsire,water, ground
+196,espeon,psychic,
+197,umbreon,dark,
+198,murkrow,dark, flying
+199,slowking,water, psychic
+200,misdreavus,ghost,
+201,unown,psychic,
+202,wobbuffet,psychic,
+203,girafarig,normal, psychic
+204,pineco,bug,
+205,forretress,bug, steel
+206,dunsparce,normal,
+207,gligar,ground, flying
+208,steelix,steel, ground
+209,snubbull,fairy,
+210,granbull,fairy,
+211,qwilfish,water, poison
+212,scizor,bug, steel
+213,shuckle,bug, rock
+214,heracross,bug, fighting
+215,sneasel,dark, ice
+216,teddiursa,normal,
+217,ursaring,normal,
+218,slugma,fire,
+219,magcargo,fire, rock
+220,swinub,ice, ground
+221,piloswine,ice, ground
+222,corsola,water, rock
+223,remoraid,water,
+224,octillery,water,
+225,delibird,ice, flying
+226,mantine,water, flying
+227,skarmory,steel, flying
+228,houndour,dark, fire
+229,houndoom,dark, fire
+230,kingdra,water, dragon
+231,phanpy,ground,
+232,donphan,ground,
+233,porygon2,normal,
+234,stantler,normal,
+235,smeargle,normal,
+236,tyrogue,fighting,
+237,hitmontop,fighting,
+238,smoochum,ice, psychic
+239,elekid,electric,
+240,magby,fire,
+241,miltank,normal,
+242,blissey,normal,
+243,raikou,electric,
+244,entei,fire,
+245,suicune,water,
+246,larvitar,rock, ground
+247,pupitar,rock, ground
+248,tyranitar,rock, dark
+249,lugia,psychic, flying
+250,ho-oh,fire, flying
+251,celebi,psychic, grass
+252,treecko,grass,
+253,grovyle,grass,
+254,sceptile,grass,
+255,torchic,fire,
+256,combusken,fire, fighting
+257,blaziken,fire, fighting
+258,mudkip,water,
+259,marshtomp,water, ground
+260,swampert,water, ground
+261,poochyena,dark,
+262,mightyena,dark,
+263,zigzagoon,normal,
+264,linoone,normal,
+265,wurmple,bug,
+266,silcoon,bug,
+267,beautifly,bug, flying
+268,cascoon,bug,
+269,dustox,bug, poison
+270,lotad,water, grass
+271,lombre,water, grass
+272,ludicolo,water, grass
+273,seedot,grass,
+274,nuzleaf,grass, dark
+275,shiftry,grass, dark
+276,taillow,normal, flying
+277,swellow,normal, flying
+278,wingull,water, flying
+279,pelipper,water, flying
+280,ralts,psychic, fairy
+281,kirlia,psychic, fairy
+282,gardevoir,psychic, fairy
+283,surskit,bug, water
+284,masquerain,bug, flying
+285,shroomish,grass,
+286,breloom,grass, fighting
+287,slakoth,normal,
+288,vigoroth,normal,
+289,slaking,normal,
+290,nincada,bug, ground
+291,ninjask,bug, flying
+292,shedinja,bug, ghost
+293,whismur,normal,
+294,loudred,normal,
+295,exploud,normal,
+296,makuhita,fighting,
+297,hariyama,fighting,
+298,azurill,normal, fairy
+299,nosepass,rock,
+300,skitty,normal,
+301,delcatty,normal,
+302,sableye,dark, ghost
+303,mawile,steel, fairy
+304,aron,steel, rock
+305,lairon,steel, rock
+306,aggron,steel, rock
+307,meditite,fighting, psychic
+308,medicham,fighting, psychic
+309,electrike,electric,
+310,manectric,electric,
+311,plusle,electric,
+312,minun,electric,
+313,volbeat,bug,
+314,illumise,bug,
+315,roselia,grass, poison
+316,gulpin,poison,
+317,swalot,poison,
+318,carvanha,water, dark
+319,sharpedo,water, dark
+320,wailmer,water,
+321,wailord,water,
+322,numel,fire, ground
+323,camerupt,fire, ground
+324,torkoal,fire,
+325,spoink,psychic,
+326,grumpig,psychic,
+327,spinda,normal,
+328,trapinch,ground,
+329,vibrava,ground, dragon
+330,flygon,ground, dragon
+331,cacnea,grass,
+332,cacturne,grass, dark
+333,swablu,normal, flying
+334,altaria,dragon, flying
+335,zangoose,normal,
+336,seviper,poison,
+337,lunatone,rock, psychic
+338,solrock,rock, psychic
+339,barboach,water, ground
+340,whiscash,water, ground
+341,corphish,water,
+342,crawdaunt,water, dark
+343,baltoy,ground, psychic
+344,claydol,ground, psychic
+345,lileep,rock, grass
+346,cradily,rock, grass
+347,anorith,rock, bug
+348,armaldo,rock, bug
+349,feebas,water,
+350,milotic,water,
+351,castform,normal,
+352,kecleon,normal,
+353,shuppet,ghost,
+354,banette,ghost,
+355,duskull,ghost,
+356,dusclops,ghost,
+357,tropius,grass, flying
+358,chimecho,psychic,
+359,absol,dark,
+360,wynaut,psychic,
+361,snorunt,ice,
+362,glalie,ice,
+363,spheal,ice, water
+364,sealeo,ice, water
+365,walrein,ice, water
+366,clamperl,water,
+367,huntail,water,
+368,gorebyss,water,
+369,relicanth,water, rock
+370,luvdisc,water,
+371,bagon,dragon,
+372,shelgon,dragon,
+373,salamence,dragon, flying
+374,beldum,steel, psychic
+375,metang,steel, psychic
+376,metagross,steel, psychic
+377,regirock,rock,
+378,regice,ice,
+379,registeel,steel,
+380,latias,dragon, psychic
+381,latios,dragon, psychic
+382,kyogre,water,
+383,groudon,ground,
+384,rayquaza,dragon, flying
+385,jirachi,steel, psychic
+386,deoxys-normal,psychic,
+387,turtwig,grass,
+388,grotle,grass,
+389,torterra,grass, ground
+390,chimchar,fire,
+391,monferno,fire, fighting
+392,infernape,fire, fighting
+393,piplup,water,
+394,prinplup,water,
+395,empoleon,water, steel
+396,starly,normal, flying
+397,staravia,normal, flying
+398,staraptor,normal, flying
+399,bidoof,normal,
+400,bibarel,normal, water
+401,kricketot,bug,
+402,kricketune,bug,
+403,shinx,electric,
+404,luxio,electric,
+405,luxray,electric,
+406,budew,grass, poison
+407,roserade,grass, poison
+408,cranidos,rock,
+409,rampardos,rock,
+410,shieldon,rock, steel
+411,bastiodon,rock, steel
+412,burmy,bug,
+413,wormadam-plant,bug, grass
+414,mothim,bug, flying
+415,combee,bug, flying
+416,vespiquen,bug, flying
+417,pachirisu,electric,
+418,buizel,water,
+419,floatzel,water,
+420,cherubi,grass,
+421,cherrim,grass,
+422,shellos,water,
+423,gastrodon,water, ground
+424,ambipom,normal,
+425,drifloon,ghost, flying
+426,drifblim,ghost, flying
+427,buneary,normal,
+428,lopunny,normal,
+429,mismagius,ghost,
+430,honchkrow,dark, flying
+431,glameow,normal,
+432,purugly,normal,
+433,chingling,psychic,
+434,stunky,poison, dark
+435,skuntank,poison, dark
+436,bronzor,steel, psychic
+437,bronzong,steel, psychic
+438,bonsly,rock,
+439,mime jr,psychic, fairy
+440,happiny,normal,
+441,chatot,normal, flying
+442,spiritomb,ghost, dark
+443,gible,dragon, ground
+444,gabite,dragon, ground
+445,garchomp,dragon, ground
+446,munchlax,normal,
+447,riolu,fighting,
+448,lucario,fighting, steel
+449,hippopotas,ground,
+450,hippowdon,ground,
+451,skorupi,poison, bug
+452,drapion,poison, dark
+453,croagunk,poison, fighting
+454,toxicroak,poison, fighting
+455,carnivine,grass,
+456,finneon,water,
+457,lumineon,water,
+458,mantyke,water, flying
+459,snover,grass, ice
+460,abomasnow,grass, ice
+461,weavile,dark, ice
+462,magnezone,electric, steel
+463,lickilicky,normal,
+464,rhyperior,ground, rock
+465,tangrowth,grass,
+466,electivire,electric,
+467,magmortar,fire,
+468,togekiss,fairy, flying
+469,yanmega,bug, flying
+470,leafeon,grass,
+471,glaceon,ice,
+472,gliscor,ground, flying
+473,mamoswine,ice, ground
+474,porygon-z,normal,
+475,gallade,psychic, fighting
+476,probopass,rock, steel
+477,dusknoir,ghost,
+478,froslass,ice, ghost
+479,rotom,electric, ghost
+480,uxie,psychic,
+481,mesprit,psychic,
+482,azelf,psychic,
+483,dialga,steel, dragon
+484,palkia,water, dragon
+485,heatran,fire, steel
+486,regigigas,normal,
+487,giratina-altered,ghost, dragon
+488,cresselia,psychic,
+489,phione,water,
+490,manaphy,water,
+491,darkrai,dark,
+492,shaymin-land,grass,
+493,arceus,normal,
+494,victini,psychic, fire
+495,snivy,grass,
+496,servine,grass,
+497,serperior,grass,
+498,tepig,fire,
+499,pignite,fire, fighting
+500,emboar,fire, fighting
+501,oshawott,water,
+502,dewott,water,
+503,samurott,water,
+504,patrat,normal,
+505,watchog,normal,
+506,lillipup,normal,
+507,herdier,normal,
+508,stoutland,normal,
+509,purrloin,dark,
+510,liepard,dark,
+511,pansage,grass,
+512,simisage,grass,
+513,pansear,fire,
+514,simisear,fire,
+515,panpour,water,
+516,simipour,water,
+517,munna,psychic,
+518,musharna,psychic,
+519,pidove,normal, flying
+520,tranquill,normal, flying
+521,unfezant,normal, flying
+522,blitzle,electric,
+523,zebstrika,electric,
+524,roggenrola,rock,
+525,boldore,rock,
+526,gigalith,rock,
+527,woobat,psychic, flying
+528,swoobat,psychic, flying
+529,drilbur,ground,
+530,excadrill,ground, steel
+531,audino,normal,
+532,timburr,fighting,
+533,gurdurr,fighting,
+534,conkeldurr,fighting,
+535,tympole,water,
+536,palpitoad,water, ground
+537,seismitoad,water, ground
+538,throh,fighting,
+539,sawk,fighting,
+540,sewaddle,bug, grass
+541,swadloon,bug, grass
+542,leavanny,bug, grass
+543,venipede,bug, poison
+544,whirlipede,bug, poison
+545,scolipede,bug, poison
+546,cottonee,grass, fairy
+547,whimsicott,grass, fairy
+548,petilil,grass,
+549,lilligant,grass,
+550,basculin-red-striped,water,
+551,sandile,ground, dark
+552,krokorok,ground, dark
+553,krookodile,ground, dark
+554,darumaka,fire,
+555,darmanitan-standard,fire,
+556,maractus,grass,
+557,dwebble,bug, rock
+558,crustle,bug, rock
+559,scraggy,dark, fighting
+560,scrafty,dark, fighting
+561,sigilyph,psychic, flying
+562,yamask,ghost,
+563,cofagrigus,ghost,
+564,tirtouga,water, rock
+565,carracosta,water, rock
+566,archen,rock, flying
+567,archeops,rock, flying
+568,trubbish,poison,
+569,garbodor,poison,
+570,zorua,dark,
+571,zoroark,dark,
+572,minccino,normal,
+573,cinccino,normal,
+574,gothita,psychic,
+575,gothorita,psychic,
+576,gothitelle,psychic,
+577,solosis,psychic,
+578,duosion,psychic,
+579,reuniclus,psychic,
+580,ducklett,water, flying
+581,swanna,water, flying
+582,vanillite,ice,
+583,vanillish,ice,
+584,vanilluxe,ice,
+585,deerling,normal, grass
+586,sawsbuck,normal, grass
+587,emolga,electric, flying
+588,karrablast,bug,
+589,escavalier,bug, steel
+590,foongus,grass, poison
+591,amoonguss,grass, poison
+592,frillish,water, ghost
+593,jellicent,water, ghost
+594,alomomola,water,
+595,joltik,bug, electric
+596,galvantula,bug, electric
+597,ferroseed,grass, steel
+598,ferrothorn,grass, steel
+599,klink,steel,
+600,klang,steel,
+601,klinklang,steel,
+602,tynamo,electric,
+603,eelektrik,electric,
+604,eelektross,electric,
+605,elgyem,psychic,
+606,beheeyem,psychic,
+607,litwick,ghost, fire
+608,lampent,ghost, fire
+609,chandelure,ghost, fire
+610,axew,dragon,
+611,fraxure,dragon,
+612,haxorus,dragon,
+613,cubchoo,ice,
+614,beartic,ice,
+615,cryogonal,ice,
+616,shelmet,bug,
+617,accelgor,bug,
+618,stunfisk,ground, electric
+619,mienfoo,fighting,
+620,mienshao,fighting,
+621,druddigon,dragon,
+622,golett,ground, ghost
+623,golurk,ground, ghost
+624,pawniard,dark, steel
+625,bisharp,dark, steel
+626,bouffalant,normal,
+627,rufflet,normal, flying
+628,braviary,normal, flying
+629,vullaby,dark, flying
+630,mandibuzz,dark, flying
+631,heatmor,fire,
+632,durant,bug, steel
+633,deino,dark, dragon
+634,zweilous,dark, dragon
+635,hydreigon,dark, dragon
+636,larvesta,bug, fire
+637,volcarona,bug, fire
+638,cobalion,steel, fighting
+639,terrakion,rock, fighting
+640,virizion,grass, fighting
+641,tornadus-incarnate,flying,
+642,thundurus-incarnate,electric, flying
+643,reshiram,dragon, fire
+644,zekrom,dragon, electric
+645,landorus-incarnate,ground, flying
+646,kyurem,dragon, ice
+647,keldeo-ordinary,water, fighting
+648,meloetta-aria,normal, psychic
+649,genesect,bug, steel
+650,chespin,grass,
+651,quilladin,grass,
+652,chesnaught,grass, fighting
+653,fennekin,fire,
+654,braixen,fire,
+655,delphox,fire, psychic
+656,froakie,water,
+657,frogadier,water,
+658,greninja,water, dark
+659,bunnelby,normal,
+660,diggersby,normal, ground
+661,fletchling,normal, flying
+662,fletchinder,fire, flying
+663,talonflame,fire, flying
+664,scatterbug,bug,
+665,spewpa,bug,
+666,vivillon,bug, flying
+667,litleo,fire, normal
+668,pyroar,fire, normal
+669,flabebe,fairy,
+670,floette,fairy,
+671,florges,fairy,
+672,skiddo,grass,
+673,gogoat,grass,
+674,pancham,fighting,
+675,pangoro,fighting, dark
+676,furfrou,normal,
+677,espurr,psychic,
+678,meowstic-male,psychic,
+679,honedge,steel, ghost
+680,doublade,steel, ghost
+681,aegislash-shield,steel, ghost
+682,spritzee,fairy,
+683,aromatisse,fairy,
+684,swirlix,fairy,
+685,slurpuff,fairy,
+686,inkay,dark, psychic
+687,malamar,dark, psychic
+688,binacle,rock, water
+689,barbaracle,rock, water
+690,skrelp,poison, water
+691,dragalge,poison, dragon
+692,clauncher,water,
+693,clawitzer,water,
+694,helioptile,electric, normal
+695,heliolisk,electric, normal
+696,tyrunt,rock, dragon
+697,tyrantrum,rock, dragon
+698,amaura,rock, ice
+699,aurorus,rock, ice
+700,sylveon,fairy,
+701,hawlucha,fighting, flying
+702,dedenne,electric, fairy
+703,carbink,rock, fairy
+704,goomy,dragon,
+705,sliggoo,dragon,
+706,goodra,dragon,
+707,klefki,steel, fairy
+708,phantump,ghost, grass
+709,trevenant,ghost, grass
+710,pumpkaboo-average,ghost, grass
+711,gourgeist-average,ghost, grass
+712,bergmite,ice,
+713,avalugg,ice,
+714,noibat,flying, dragon
+715,noivern,flying, dragon
+716,xerneas,fairy,
+717,yveltal,dark, flying
+718,zygarde-50,dragon, ground
+719,diancie,rock, fairy
+720,hoopa,psychic, ghost
+721,volcanion,fire, water
+722,rowlet,grass, flying
+723,dartrix,grass, flying
+724,decidueye,grass, ghost
+725,litten,fire,
+726,torracat,fire,
+727,incineroar,fire, dark
+728,popplio,water,
+729,brionne,water,
+730,primarina,water, fairy
+731,pikipek,normal, flying
+732,trumbeak,normal, flying
+733,toucannon,normal, flying
+734,yungoos,normal,
+735,gumshoos,normal,
+736,grubbin,bug,
+737,charjabug,bug, electric
+738,vikavolt,bug, electric
+739,crabrawler,fighting,
+740,crabominable,fighting, ice
+741,oricorio-baile,fire, flying
+742,cutiefly,bug, fairy
+743,ribombee,bug, fairy
+744,rockruff,rock,
+745,lycanroc-midday,rock,
+746,wishiwashi-solo,water,
+747,mareanie,poison, water
+748,toxapex,poison, water
+749,mudbray,ground,
+750,mudsdale,ground,
+751,dewpider,water, bug
+752,araquanid,water, bug
+753,fomantis,grass,
+754,lurantis,grass,
+755,morelull,grass, fairy
+756,shiinotic,grass, fairy
+757,salandit,poison, fire
+758,salazzle,poison, fire
+759,stufful,normal, fighting
+760,bewear,normal, fighting
+761,bounsweet,grass,
+762,steenee,grass,
+763,tsareena,grass,
+764,comfey,fairy,
+765,oranguru,normal, psychic
+766,passimian,fighting,
+767,wimpod,bug, water
+768,golisopod,bug, water
+769,sandygast,ghost, ground
+770,palossand,ghost, ground
+771,pyukumuku,water,
+772,type-null,normal,
+773,silvally,normal,
+774,minior-red-meteor,rock, flying
+775,komala,normal,
+776,turtonator,fire, dragon
+777,togedemaru,electric, steel
+778,mimikyu-disguised,ghost, fairy
+779,bruxish,water, psychic
+780,drampa,normal, dragon
+781,dhelmise,ghost, grass
+782,jangmo-o,dragon,
+783,hakamo-o,dragon, fighting
+784,kommo-o,dragon, fighting
+785,tapu-koko,electric, fairy
+786,tapu-lele,psychic, fairy
+787,tapu-bulu,grass, fairy
+788,tapu-fini,water, fairy
+789,cosmog,psychic,
+790,cosmoem,psychic,
+791,solgaleo,psychic, steel
+792,lunala,psychic, ghost
+793,nihilego,rock, poison
+794,buzzwole,bug, fighting
+795,pheromosa,bug, fighting
+796,xurkitree,electric,
+797,celesteela,steel, flying
+798,kartana,grass, steel
+799,guzzlord,dark, dragon
+800,necrozma,psychic,
+801,magearna,steel, fairy
+802,marshadow,fighting, ghost
+803,poipole,poison,
+804,naganadel,poison, dragon
+805,stakataka,rock, steel
+806,blacephalon,fire, ghost
+807,zeraora,electric,
+808,meltan,steel,
+809,melmetal,steel,
+810,grookey,grass,
+811,thwackey,grass,
+812,rillaboom,grass,
+813,scorbunny,fire,
+814,raboot,fire,
+815,cinderace,fire,
+816,sobble,water,
+817,drizzile,water,
+818,inteleon,water,
+819,skwovet,normal,
+820,greedent,normal,
+821,rookidee,flying,
+822,corvisquire,flying,
+823,corviknight,flying, steel
+824,blipbug,bug,
+825,dottler,bug, psychic
+826,orbeetle,bug, psychic
+827,nickit,dark,
+828,thievul,dark,
+829,gossifleur,grass,
+830,eldegoss,grass,
+831,wooloo,normal,
+832,dubwool,normal,
+833,chewtle,water,
+834,drednaw,water, rock
+835,yamper,electric,
+836,boltund,electric,
+837,rolycoly,rock,
+838,carkol,rock, fire
+839,coalossal,rock, fire
+840,applin,grass, dragon
+841,flapple,grass, dragon
+842,appletun,grass, dragon
+843,silicobra,ground,
+844,sandaconda,ground,
+845,cramorant,flying, water
+846,arrokuda,water,
+847,barraskewda,water,
+848,toxel,electric, poison
+849,toxtricity-amped,electric, poison
+850,sizzlipede,fire, bug
+851,centiskorch,fire, bug
+852,clobbopus,fighting,
+853,grapploct,fighting,
+854,sinistea,ghost,
+855,polteageist,ghost,
+856,hatenna,psychic,
+857,hattrem,psychic,
+858,hatterene,psychic, fairy
+859,impidimp,dark, fairy
+860,morgrem,dark, fairy
+861,grimmsnarl,dark, fairy
+862,obstagoon,dark, normal
+863,perrserker,steel,
+864,cursola,ghost,
+865,sirfetchd,fighting,
+866,mr-rime,ice, psychic
+867,runerigus,ground, ghost
+868,milcery,fairy,
+869,alcremie,fairy,
+870,falinks,fighting,
+871,pincurchin,electric,
+872,snom,ice, bug
+873,frosmoth,ice, bug
+874,stonjourner,rock,
+875,eiscue-ice,ice,
+876,indeedee-male,psychic, normal
+877,morpeko-full-belly,electric, dark
+878,cufant,steel,
+879,copperajah,steel,
+880,dracozolt,electric, dragon
+881,arctozolt,electric, ice
+882,dracovish,water, dragon
+883,arctovish,water, ice
+884,duraludon,steel, dragon
+885,dreepy,dragon, ghost
+886,drakloak,dragon, ghost
+887,dragapult,dragon, ghost
+888,zacian,fairy,
+889,zamazenta,fighting,
+890,eternatus,poison, dragon
+891,kubfu,fighting,
+892,urshifu-single-strike,fighting, dark
+893,zarude,dark, grass
+894,regieleki,electric,
+895,regidrago,dragon,
+896,glastrier,ice,
+897,spectrier,ghost,
+898,calyrex,psychic, grass
+899,wyrdeer,normal, psychic
+900,kleavor,bug, rock
+901,ursaluna,ground, normal
+902,basculegion-male,water, ghost
+903,sneasler,fighting, poison
+904,overqwil,dark, poison
+905,enamorus-incarnate,fairy, flying
+906,sprigatito,grass,
+907,floragato,grass,
+908,meowscarada,grass, dark
+909,fuecoco,fire,
+910,crocalor,fire,
+911,skeledirge,fire, ghost
+912,quaxly,water,
+913,quaxwell,water,
+914,quaquaval,water, fighting
+915,lechonk,normal,
+916,oinkologne-male,normal,
+917,tarountula,bug,
+918,spidops,bug,
+919,nymble,bug,
+920,lokix,bug, dark
+921,pawmi,electric,
+922,pawmo,electric, fighting
+923,pawmot,electric, fighting
+924,tandemaus,normal,
+925,maushold-family-of-four,normal,
+926,fidough,fairy,
+927,dachsbun,fairy,
+928,smoliv,grass, normal
+929,dolliv,grass, normal
+930,arboliva,grass, normal
+931,squawkabilly-green-plumage,normal, flying
+932,nacli,rock,
+933,naclstack,rock,
+934,garganacl,rock,
+935,charcadet,fire,
+936,armarouge,fire, psychic
+937,ceruledge,fire, ghost
+938,tadbulb,electric,
+939,bellibolt,electric,
+940,wattrel,electric, flying
+941,kilowattrel,electric, flying
+942,maschiff,dark,
+943,mabosstiff,dark,
+944,shroodle,poison, normal
+945,grafaiai,poison, normal
+946,bramblin,grass, ghost
+947,brambleghast,grass, ghost
+948,toedscool,ground, grass
+949,toedscruel,ground, grass
+950,klawf,rock,
+951,capsakid,grass,
+952,scovillain,grass, fire
+953,rellor,bug,
+954,rabsca,bug, psychic
+955,flittle,psychic,
+956,espathra,psychic,
+957,tinkatink,fairy, steel
+958,tinkatuff,fairy, steel
+959,tinkaton,fairy, steel
+960,wiglett,water,
+961,wugtrio,water,
+962,bombirdier,flying, dark
+963,finizen,water,
+964,palafin-zero,water,
+965,varoom,steel, poison
+966,revavroom,steel, poison
+967,cyclizar,dragon, normal
+968,orthworm,steel,
+969,glimmet,rock, poison
+970,glimmora,rock, poison
+971,greavard,ghost,
+972,houndstone,ghost,
+973,flamigo,flying, fighting
+974,cetoddle,ice,
+975,cetitan,ice,
+976,veluza,water, psychic
+977,dondozo,water,
+978,tatsugiri-curly,dragon, water
+979,annihilape,fighting, ghost
+980,clodsire,poison, ground
+981,farigiraf,normal, psychic
+982,dudunsparce-two-segment,normal,
+983,kingambit,dark, steel
+984,great-tusk,ground, fighting
+985,scream-tail,fairy, psychic
+986,brute-bonnet,grass, dark
+987,flutter-mane,ghost, fairy
+988,slither-wing,bug, fighting
+989,sandy-shocks,electric, ground
+990,iron-treads,ground, steel
+991,iron-bundle,ice, water
+992,iron-hands,fighting, electric
+993,iron-jugulis,dark, flying
+994,iron-moth,fire, poison
+995,iron-thorns,rock, electric
+996,frigibax,dragon, ice
+997,arctibax,dragon, ice
+998,baxcalibur,dragon, ice
+999,gimmighoul,ghost,
+1000,gholdengo,steel, ghost
+1001,wo-chien,dark, grass
+1002,chien-pao,dark, ice
+1003,ting-lu,dark, ground
+1004,chi-yu,dark, fire
+1005,roaring-moon,dragon, dark
+1006,iron-valiant,fairy, fighting
+1007,koraidon,fighting, dragon
+1008,miraidon,electric, dragon
+1009,walking-wake,water, dragon
+1010,iron-leaves,grass, psychic
+1011,dipplin,grass, dragon
+1012,poltchageist,grass, ghost
+1013,sinistcha,grass, ghost
+1014,okidogi,poison, fighting
+1015,munkidori,poison, psychic
+1016,fezandipiti,poison, fairy
+1017,ogerpon,grass,
+1018,archaludon,steel, dragon
+1019,hydrapple,grass, dragon
+1020,gouging-fire,fire, dragon
+1021,raging-bolt,electric, dragon
+1022,iron-boulder,rock, psychic
+1023,iron-crown,steel, psychic
+1024,terapagos,normal,
+1025,pecharunt,poison, ghost

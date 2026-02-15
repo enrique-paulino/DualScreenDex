@@ -1,216 +1,54 @@
 package com.enrpau.dualscreendex
 
+import android.content.Context
+import android.util.Log
+import com.enrpau.dualscreendex.data.CsvParsers
+import com.enrpau.dualscreendex.data.RomManager
+import com.enrpau.dualscreendex.data.RomProfile
+
 object TypeMatchup {
-    enum class Gen {
-        GEN_1,
-        GEN_2_5,
-        GEN_6_PLUS
-    }
 
-    private val modernChart = mapOf(
-        PokemonType.NORMAL to mapOf(
-            PokemonType.ROCK to 0.5,
-            PokemonType.GHOST to 0.0,
-            PokemonType.STEEL to 0.5
-        ),
+    private var customChart: Map<String, Double>? = null
+    private var lastLoadedProfileId: String? = null
 
-        PokemonType.FIRE to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.WATER to 0.5,
-            PokemonType.GRASS to 2.0,
-            PokemonType.ICE to 2.0,
-            PokemonType.BUG to 2.0,
-            PokemonType.ROCK to 0.5,
-            PokemonType.DRAGON to 0.5,
-            PokemonType.STEEL to 2.0
-        ),
+    fun getMultiplier(attacker: PokemonType, defender: PokemonType, context: Context): Double {
+        val profile = RomManager.currentProfile
 
-        PokemonType.WATER to mapOf(
-            PokemonType.FIRE to 2.0,
-            PokemonType.WATER to 0.5,
-            PokemonType.GRASS to 0.5,
-            PokemonType.GROUND to 2.0,
-            PokemonType.ROCK to 2.0,
-            PokemonType.DRAGON to 0.5
-        ),
+        ensureChartLoaded(context, profile)
 
-        PokemonType.ELECTRIC to mapOf(
-            PokemonType.WATER to 2.0,
-            PokemonType.ELECTRIC to 0.5,
-            PokemonType.GRASS to 0.5,
-            PokemonType.GROUND to 0.0,
-            PokemonType.FLYING to 2.0,
-            PokemonType.DRAGON to 0.5
-        ),
+        val key = "${attacker.name.uppercase()}_${defender.name.uppercase()}"
+        val baseMultiplier = customChart?.get(key) ?: 1.0
 
-        PokemonType.GRASS to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.WATER to 2.0,
-            PokemonType.GRASS to 0.5,
-            PokemonType.POISON to 0.5,
-            PokemonType.GROUND to 2.0,
-            PokemonType.FLYING to 0.5,
-            PokemonType.BUG to 0.5,
-            PokemonType.ROCK to 2.0,
-            PokemonType.DRAGON to 0.5,
-            PokemonType.STEEL to 0.5
-        ),
-
-        PokemonType.ICE to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.WATER to 0.5,
-            PokemonType.GRASS to 2.0,
-            PokemonType.ICE to 0.5,
-            PokemonType.GROUND to 2.0,
-            PokemonType.FLYING to 2.0,
-            PokemonType.DRAGON to 2.0,
-            PokemonType.STEEL to 0.5
-        ),
-
-        PokemonType.FIGHTING to mapOf(
-            PokemonType.NORMAL to 2.0,
-            PokemonType.ICE to 2.0,
-            PokemonType.POISON to 0.5,
-            PokemonType.FLYING to 0.5,
-            PokemonType.PSYCHIC to 0.5,
-            PokemonType.BUG to 0.5,
-            PokemonType.ROCK to 2.0,
-            PokemonType.GHOST to 0.0,
-            PokemonType.DARK to 2.0,
-            PokemonType.STEEL to 2.0,
-            PokemonType.FAIRY to 0.5
-        ),
-
-        PokemonType.POISON to mapOf(
-            PokemonType.GRASS to 2.0,
-            PokemonType.POISON to 0.5,
-            PokemonType.GROUND to 0.5,
-            PokemonType.ROCK to 0.5,
-            PokemonType.GHOST to 0.5,
-            PokemonType.STEEL to 0.0,
-            PokemonType.FAIRY to 2.0
-        ),
-
-        PokemonType.GROUND to mapOf(
-            PokemonType.FIRE to 2.0,
-            PokemonType.ELECTRIC to 2.0,
-            PokemonType.GRASS to 0.5,
-            PokemonType.POISON to 2.0,
-            PokemonType.FLYING to 0.0,
-            PokemonType.BUG to 0.5,
-            PokemonType.ROCK to 2.0,
-            PokemonType.STEEL to 2.0
-        ),
-
-        PokemonType.FLYING to mapOf(
-            PokemonType.ELECTRIC to 0.5,
-            PokemonType.GRASS to 2.0,
-            PokemonType.FIGHTING to 2.0,
-            PokemonType.BUG to 2.0,
-            PokemonType.ROCK to 0.5,
-            PokemonType.STEEL to 0.5
-        ),
-
-        PokemonType.PSYCHIC to mapOf(
-            PokemonType.FIGHTING to 2.0,
-            PokemonType.POISON to 2.0,
-            PokemonType.PSYCHIC to 0.5,
-            PokemonType.DARK to 0.0,
-            PokemonType.STEEL to 0.5
-        ),
-
-        PokemonType.BUG to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.GRASS to 2.0,
-            PokemonType.FIGHTING to 0.5,
-            PokemonType.POISON to 0.5,
-            PokemonType.FLYING to 0.5,
-            PokemonType.PSYCHIC to 2.0,
-            PokemonType.GHOST to 0.5,
-            PokemonType.DARK to 2.0,
-            PokemonType.STEEL to 0.5,
-            PokemonType.FAIRY to 0.5
-        ),
-
-        PokemonType.ROCK to mapOf(
-            PokemonType.FIRE to 2.0,
-            PokemonType.ICE to 2.0,
-            PokemonType.FIGHTING to 0.5,
-            PokemonType.GROUND to 0.5,
-            PokemonType.FLYING to 2.0,
-            PokemonType.BUG to 2.0,
-            PokemonType.STEEL to 0.5
-        ),
-
-        PokemonType.GHOST to mapOf(
-            PokemonType.NORMAL to 0.0,
-            PokemonType.PSYCHIC to 2.0,
-            PokemonType.GHOST to 2.0,
-            PokemonType.DARK to 0.5
-        ),
-
-        PokemonType.DRAGON to mapOf(
-            PokemonType.DRAGON to 2.0,
-            PokemonType.STEEL to 0.5,
-            PokemonType.FAIRY to 0.0
-        ),
-
-        PokemonType.DARK to mapOf(
-            PokemonType.FIGHTING to 0.5,
-            PokemonType.PSYCHIC to 2.0,
-            PokemonType.GHOST to 2.0,
-            PokemonType.DARK to 0.5,
-            PokemonType.FAIRY to 0.5
-        ),
-
-        PokemonType.STEEL to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.WATER to 0.5,
-            PokemonType.ELECTRIC to 0.5,
-            PokemonType.ICE to 2.0,
-            PokemonType.ROCK to 2.0,
-            PokemonType.STEEL to 0.5,
-            PokemonType.FAIRY to 2.0
-        ),
-
-        PokemonType.FAIRY to mapOf(
-            PokemonType.FIRE to 0.5,
-            PokemonType.FIGHTING to 2.0,
-            PokemonType.POISON to 0.5,
-            PokemonType.DRAGON to 2.0,
-            PokemonType.DARK to 2.0,
-            PokemonType.STEEL to 0.5
-        )
-    )
-
-    fun getMultiplier(attack: PokemonType, defense: PokemonType, gen: Gen) : Double {
-        val baseMultiplier = modernChart[attack]?.get(defense) ?: 1.0
-
-        return when (gen) {
-            Gen.GEN_1 -> applyGen1Rules(attack, defense, baseMultiplier)
-            Gen.GEN_2_5 -> applyGen2Rules(attack, defense, baseMultiplier)
-            else -> baseMultiplier
+        if (!profile.isBuiltIn && profile.matchupFilePath != null) {
+            return baseMultiplier
         }
 
+        return applyMechanics(attacker, defender, baseMultiplier, profile.baseMechanics)
     }
 
-    private fun applyGen1Rules(attack: PokemonType, defense: PokemonType, current: Double): Double {
-        if (isTypeMissingInGen1(attack) || isTypeMissingInGen1(defense)) {
-            return 1.0
+    private fun ensureChartLoaded(context: Context, profile: RomProfile) {
+        if (lastLoadedProfileId != profile.id || customChart == null) {
+            Log.d("TypeMatchup", "Reloading Chart for: ${profile.name}")
+            customChart = CsvParsers.parseMatchupChart(context, profile)
+            lastLoadedProfileId = profile.id
         }
-
-        if (attack == PokemonType.GHOST && defense == PokemonType.PSYCHIC) return 0.0
-        if (attack == PokemonType.POISON && defense == PokemonType.BUG) return 2.0
-        if (attack == PokemonType.BUG && defense == PokemonType.POISON) return 2.0
-        if (attack == PokemonType.ICE && defense == PokemonType.FIRE) return 1.0
-
-        return current
     }
 
-    private fun applyGen2Rules(attack: PokemonType, defense: PokemonType, current: Double): Double {
-        // steel resisted ghost & dark in gen 2-5
-        if (defense == PokemonType.STEEL && (attack == PokemonType.GHOST || attack == PokemonType.DARK)) {
-            return 0.5
+    private fun applyMechanics(atk: PokemonType, def: PokemonType, current: Double, mechanics: RomProfile.Mechanics): Double {
+        when (mechanics) {
+            RomProfile.Mechanics.GEN_1 -> {
+                if (isTypeMissingInGen1(atk) || isTypeMissingInGen1(def)) return 1.0
+                if (atk == PokemonType.GHOST && def == PokemonType.PSYCHIC) return 0.0
+                if (atk == PokemonType.POISON && def == PokemonType.BUG) return 2.0
+                if (atk == PokemonType.BUG && def == PokemonType.POISON) return 2.0
+                if (atk == PokemonType.ICE && def == PokemonType.FIRE) return 1.0
+            }
+            RomProfile.Mechanics.GEN_2_TO_5 -> {
+                if (def == PokemonType.STEEL && (atk == PokemonType.GHOST || atk == PokemonType.DARK)) {
+                    return 0.5
+                }
+            }
+            else -> return current
         }
         return current
     }
@@ -218,5 +56,4 @@ object TypeMatchup {
     private fun isTypeMissingInGen1(type: PokemonType): Boolean {
         return type == PokemonType.DARK || type == PokemonType.STEEL || type == PokemonType.FAIRY
     }
-
 }

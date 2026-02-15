@@ -1,6 +1,7 @@
 package com.enrpau.dualscreendex
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -11,7 +12,12 @@ import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import androidx.core.content.edit
+import com.enrpau.dualscreendex.data.RomManager
+import com.enrpau.dualscreendex.data.RomProfile
+import androidx.recyclerview.widget.RecyclerView
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -20,17 +26,8 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var toolbar: MaterialToolbar
 
     // text labels
-    private lateinit var lblGenTitle: TextView
-    private lateinit var lblGenDesc: TextView
     private lateinit var lblThemeTitle: TextView
-
-    // gen cards
-    private lateinit var cardGen6: MaterialCardView
-    private lateinit var cardGen25: MaterialCardView
-    private lateinit var cardGen1: MaterialCardView
-    private lateinit var txtGen6: TextView
-    private lateinit var txtGen25: TextView
-    private lateinit var txtGen1: TextView
+    private lateinit var lblScannerTitle: TextView
 
     // theme cards
     private lateinit var cardThemeDynamic: MaterialCardView
@@ -38,12 +35,16 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var cardThemeRed: MaterialCardView
     private lateinit var cardThemeMagical: MaterialCardView
 
+    // scanner buttons
+    private lateinit var btnScanSource: MaterialButton
+    private lateinit var btnScanAlign: MaterialButton
+
+    // profile ui
+    private lateinit var rvProfiles: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // load theme
         ThemeManager.loadTheme(this)
-
+        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
@@ -51,21 +52,18 @@ class SettingsActivity : AppCompatActivity() {
         root = findViewById(R.id.settings_root)
         toolbar = findViewById(R.id.topAppBar)
 
-        lblGenTitle = findViewById(R.id.lblGenTitle)
-        lblGenDesc = findViewById(R.id.lblGenDesc)
         lblThemeTitle = findViewById(R.id.lblThemeTitle)
-
-        cardGen6 = findViewById(R.id.cardGen6)
-        cardGen25 = findViewById(R.id.cardGen25)
-        cardGen1 = findViewById(R.id.cardGen1)
-        txtGen6 = findViewById(R.id.txtGen6)
-        txtGen25 = findViewById(R.id.txtGen25)
-        txtGen1 = findViewById(R.id.txtGen1)
+        lblScannerTitle = findViewById(R.id.lblScannerTitle)
 
         cardThemeDynamic = findViewById(R.id.cardThemeDynamic)
         cardThemeOled = findViewById(R.id.cardThemeOled)
         cardThemeRed = findViewById(R.id.cardThemeRed)
         cardThemeMagical = findViewById(R.id.cardThemeMagical)
+
+        btnScanSource = findViewById(R.id.btnScanSource)
+        btnScanAlign = findViewById(R.id.btnScanAlign)
+
+        rvProfiles = findViewById(R.id.rvProfiles)
 
         ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -77,30 +75,52 @@ class SettingsActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences("DualDexPrefs", Context.MODE_PRIVATE)
 
-        setupGenClicks(prefs)
         setupThemeClicks(prefs)
+        setupScannerClicks(prefs)
+        setupProfiles()
 
         // set initial state
-        refreshGenUI(prefs)
         refreshThemeUI(prefs)
+        refreshScannerUI(prefs)
         applyThemeToSettingsScreen()
     }
 
-    private fun setupGenClicks(prefs: SharedPreferences) {
-        val clickListener = { genCode: String ->
-            prefs.edit().putString("SELECTED_GEN", genCode).apply()
-            refreshGenUI(prefs)
-        }
+    override fun onResume() {
+        super.onResume()
+        refreshProfileList()
+    }
 
-        cardGen6.setOnClickListener { clickListener("GEN_6_PLUS") }
-        cardGen25.setOnClickListener { clickListener("GEN_2_TO_5") }
-        cardGen1.setOnClickListener { clickListener("GEN_1") }
+    private fun setupProfiles() {
+        findViewById<MaterialButton>(R.id.btnCreateProfile).setOnClickListener {
+            startActivity(Intent(this, CreateProfileActivity::class.java))
+        }
+        rvProfiles.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+
+        refreshProfileList()
+    }
+
+    private fun refreshProfileList() {
+        val profiles = RomManager.getAllProfiles()
+        val current = RomManager.currentProfile
+
+        android.util.Log.d("DualDex_Settings", "Refreshing UI. Found ${profiles.size} profiles.")
+
+        val adapter = ProfileAdapter(profiles, current.id,
+            onSelect = { profile ->
+                RomManager.selectProfile(this, profile)
+                refreshProfileList()
+            },
+            onDelete = { profile ->
+                RomManager.deleteCustomProfile(this, profile)
+                refreshProfileList()
+            }
+        )
+        rvProfiles.adapter = adapter
     }
 
     private fun setupThemeClicks(prefs: SharedPreferences) {
         val clickListener = { themeId: String ->
-            prefs.edit().putString("SELECTED_THEME_ID", themeId).apply()
-
+            prefs.edit { putString("SELECTED_THEME_ID", themeId) }
             ThemeManager.loadTheme(this)
 
             refreshThemeUI(prefs)
@@ -113,36 +133,27 @@ class SettingsActivity : AppCompatActivity() {
         cardThemeMagical.setOnClickListener { clickListener("magical") }
     }
 
-    private fun refreshGenUI(prefs: SharedPreferences) {
-        val selected = prefs.getString("SELECTED_GEN", "GEN_6_PLUS")
+    private fun setupScannerClicks(prefs: SharedPreferences) {
+        btnScanSource.setOnClickListener {
+            val current = prefs.getString("SCAN_SOURCE", "top") ?: "top"
+            val newMode = if (current == "top") "bottom" else "top"
 
-        // style the card
-        fun updateCard(card: MaterialCardView, txt: TextView, isSelected: Boolean) {
-            val theme = ThemeManager.currentTheme
-            val activeColor = if (theme.id == "red") theme.searchBoxColor else theme.headerTextColor
-
-            if (isSelected) {
-                card.strokeColor = activeColor
-                card.strokeWidth = 6
-                txt.setTextColor(activeColor)
-            } else {
-                card.strokeColor = if (theme.id == "oled") Color.DKGRAY else Color.LTGRAY
-                card.strokeWidth = 2
-                txt.setTextColor(if (theme.id == "oled") Color.GRAY else Color.GRAY)
-            }
-
-            card.setCardBackgroundColor(if (theme.id == "oled") Color.BLACK else Color.WHITE)
+            prefs.edit { putString("SCAN_SOURCE", newMode) }
+            refreshScannerUI(prefs)
         }
 
-        updateCard(cardGen6, txtGen6, selected == "GEN_6_PLUS")
-        updateCard(cardGen25, txtGen25, selected == "GEN_2_TO_5")
-        updateCard(cardGen1, txtGen1, selected == "GEN_1")
+        btnScanAlign.setOnClickListener {
+            val current = prefs.getString("SCAN_ALIGN", "left") ?: "left"
+            val newMode = if (current == "left") "right" else "left"
+
+            prefs.edit { putString("SCAN_ALIGN", newMode) }
+            refreshScannerUI(prefs)
+        }
     }
 
     private fun refreshThemeUI(prefs: SharedPreferences) {
         val selected = prefs.getString("SELECTED_THEME_ID", "dynamic")
         val theme = ThemeManager.currentTheme
-
         val highlightColor = if (theme.id == "oled") Color.WHITE else Color.BLACK
 
         fun updateThemeCard(card: MaterialCardView, isSelected: Boolean) {
@@ -161,18 +172,23 @@ class SettingsActivity : AppCompatActivity() {
         updateThemeCard(cardThemeMagical, selected == "magical")
     }
 
+    private fun refreshScannerUI(prefs: SharedPreferences) {
+        val source = prefs.getString("SCAN_SOURCE", "top")?.uppercase() ?: "TOP"
+        val align = prefs.getString("SCAN_ALIGN", "left")?.uppercase() ?: "LEFT"
+
+        btnScanSource.text = "Scan Screen: $source"
+        btnScanAlign.text = "Pokemon Aligned: $align"
+    }
+
     private fun applyThemeToSettingsScreen() {
         val theme = ThemeManager.currentTheme
 
         // backgrounds
         if (theme.isGradientBg) {
-            // magical theme
             root.background = ThemeManager.StarryDrawable()
             toolbar.setBackgroundColor(Color.TRANSPARENT)
         } else if (theme.isRetroScreen) {
-            // pokedex theme
             root.background = ThemeManager.createScanlineDrawable(this, withBorder = false)
-
             toolbar.setBackgroundColor(theme.windowBackground)
         } else {
             root.background = null
@@ -183,16 +199,27 @@ class SettingsActivity : AppCompatActivity() {
 
         // text colors
         val textColor = if (theme.id == "oled") Color.WHITE else Color.BLACK
-        val subTextColor = if (theme.id == "oled") Color.LTGRAY else Color.DKGRAY
+        if (theme.id == "oled") Color.LTGRAY else Color.DKGRAY
+        val accentColor = if (theme.id == "red") theme.searchBoxColor else theme.headerTextColor
 
         toolbar.setTitleTextColor(textColor)
         toolbar.setNavigationIconTint(textColor)
 
-        lblGenTitle.setTextColor(textColor)
-        lblGenDesc.setTextColor(subTextColor)
         lblThemeTitle.setTextColor(textColor)
+        lblScannerTitle.setTextColor(textColor)
 
-        val prefs = getSharedPreferences("DualDexPrefs", Context.MODE_PRIVATE)
-        refreshGenUI(prefs)
+        val btnTextColor = if (theme.id == "oled") Color.WHITE else accentColor
+        val btnStrokeColor = if (theme.id == "oled") Color.DKGRAY else Color.LTGRAY
+
+        fun styleButton(btn: MaterialButton) {
+            btn.setTextColor(btnTextColor)
+            btn.setStrokeColor(android.content.res.ColorStateList.valueOf(btnStrokeColor))
+            btn.setRippleColor(android.content.res.ColorStateList.valueOf("#20000000".toColorInt()))
+        }
+
+        styleButton(btnScanSource)
+        styleButton(btnScanAlign)
+
+        val prefs = getSharedPreferences("DualDexPrefs", MODE_PRIVATE)
     }
 }
