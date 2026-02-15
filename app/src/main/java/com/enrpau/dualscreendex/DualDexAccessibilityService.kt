@@ -29,6 +29,17 @@ class DualDexAccessibilityService : AccessibilityService() {
     private var lastScanTime = 0L
     private val SCAN_COOLDOWN = 600L // ms
 
+    private val loopHandler = Handler(Looper.getMainLooper())
+    private val loopRunnable = object : Runnable {
+        override fun run() {
+            if (isScanning) {
+            } else {
+                triggerScreenScan()
+            }
+            loopHandler.postDelayed(this, 1500L)
+        }
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         RomManager.initialize(this)
@@ -39,6 +50,9 @@ class DualDexAccessibilityService : AccessibilityService() {
             pokemonList = repository.getAllPokemon()
             android.util.Log.d("DualDex_Service", "Service loaded ${pokemonList.size} Pokemon")
         }
+
+        loopHandler.post(loopRunnable)
+        android.util.Log.d("DualDex_Service", "Polling Loop Started")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -215,4 +229,10 @@ class DualDexAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 3. STOP THE LOOP (Crucial to prevent battery drain/crashes)
+        loopHandler.removeCallbacks(loopRunnable)
+    }
 }
