@@ -20,8 +20,16 @@ object CsvParsers {
             } else {
                 PokemonType.UNKNOWN
             }
+
+            val japaneseKana = if (tokens.size > 4 && tokens[4].isNotBlank()) {
+                tokens[4].trim()
+            } else {
+                null
+            }
+
             // Base pokemon have no variant label
-            Pokemon(name, id, t1, t2, null)
+            Pokemon(name, id, t1, t2, null, japaneseKana)
+
         }
     }
 
@@ -40,6 +48,13 @@ object CsvParsers {
             } else {
                 PokemonType.UNKNOWN
             }
+
+            val japaneseKana = if (tokens.size > 4 && tokens[4].isNotBlank()) {
+                tokens[4].trim()
+            } else {
+                null
+            }
+
 
             Pokemon("TEMP_NAME", id, t1, t2, label)
         }
