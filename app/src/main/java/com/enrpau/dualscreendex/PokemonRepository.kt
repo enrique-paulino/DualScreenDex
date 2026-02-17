@@ -26,22 +26,30 @@ class PokemonRepository(private val context: Context) {
 
         val nameMap = baseList.associate { it.id to it.name }
 
-        val processedRegionals = regionalList.map { p ->
-            val rawName = nameMap[p.id] ?: "Unknown"
-            val baseName = rawName.replaceFirstChar { it.uppercase() }
-            // adapter takes care of region suffix
-            val fullName = baseName
+        val baseMap = baseList.associateBy { it.id }
 
-            Pokemon(fullName, p.id, p.type1, p.type2, p.variantLabel)
+        val processedRegionals = regionalList.map { p ->
+            val basePokemon = baseMap[p.id]
+            val baseName = basePokemon?.name ?: "Unknown"
+            val japaneseKana = basePokemon?.japaneseKana
+
+            Pokemon(baseName, p.id, p.type1, p.type2, p.variantLabel, japaneseKana)
         }
 
+
         allPokemon = (baseList + processedRegionals).sortedBy { it.id }
+        println("DEBUG FIRST POKEMON: ${allPokemon.firstOrNull()?.name} - ${allPokemon.firstOrNull()?.japaneseKana}")
+
     }
 
     fun getAllPokemon(): List<Pokemon> = allPokemon
 
     fun getVariantsFor(name: String): List<Pokemon> {
-        val target = allPokemon.find { it.name.equals(name, true) } ?: return emptyList()
+        val target = allPokemon.find {
+            it.name.equals(name, true) ||
+            it.japaneseKana?.equals(name) == true
+        } ?: return emptyList()
+
 
         return allPokemon.filter { it.id == target.id }
     }
@@ -50,7 +58,9 @@ class PokemonRepository(private val context: Context) {
         if (query.isBlank()) return allPokemon
         return allPokemon.filter {
             it.name.contains(query, ignoreCase = true) ||
-                    (it.variantLabel?.contains(query, ignoreCase = true) == true)
+            (it.japaneseKana?.contains(query) == true) ||
+            (it.variantLabel?.contains(query, ignoreCase = true) == true)
         }
+
     }
 }

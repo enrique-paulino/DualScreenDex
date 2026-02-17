@@ -13,12 +13,15 @@ import android.view.accessibility.AccessibilityEvent
 import com.enrpau.dualscreendex.data.RomManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
 import java.util.concurrent.Executors
 
 class DualDexAccessibilityService : AccessibilityService() {
 
-    private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    private val recognizer = TextRecognition.getClient(
+        JapaneseTextRecognizerOptions.Builder().build()
+    )
+
     private val executor = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
 
@@ -145,8 +148,34 @@ class DualDexAccessibilityService : AccessibilityService() {
     }
 
     private fun processOcrResult(rawText: String) {
-        val cleanText = rawText.replace("\n", " ").replace(Regex("[^A-Za-z -]"), "")
-        val words = cleanText.split(" ").filter { it.length > 3 }
+        android.util.Log.d("OCR_DEBUG", "RAW OCR TEXT: $rawText")
+
+        val cleanText = rawText
+            .replace("\n", " ")
+            .replace(Regex("[^A-Za-z\\u3040-\\u30FF\\u4E00-\\u9FFF\\- ]"), "")
+            .trim()
+
+        android.util.Log.d("OCR_DEBUG", "CLEAN OCR TEXT: $cleanText")
+        val normalizedText = cleanText
+            .replace(Regex("\\bNo\\.?", RegexOption.IGNORE_CASE), "")
+            .trim()
+
+        android.util.Log.d("OCR_DEBUG", "NORMALIZED OCR TEXT: $normalizedText")
+
+
+
+
+        val words = normalizedText
+            .split(Regex("\\s+"))
+            .filter { word ->
+                word.isNotBlank() &&
+                word.length >= 2 &&
+                !word.equals("HP", ignoreCase = true) &&
+                !word.equals("Lv", ignoreCase = true)
+            }
+
+
+
 
         val foundNames = ArrayList<String>()
         val foundIds = ArrayList<Int>()
@@ -185,26 +214,73 @@ class DualDexAccessibilityService : AccessibilityService() {
         sendBroadcast(intent)
     }
 
+    private fun normalizeKana(input: String): String {
+        return input
+            .replace('ァ', 'ア')
+            .replace('ィ', 'イ')
+            .replace('ゥ', 'ウ')
+            .replace('ェ', 'エ')
+            .replace('ォ', 'オ')
+            .replace('ャ', 'ヤ')
+            .replace('ュ', 'ユ')
+            .replace('ョ', 'ヨ')
+            .replace('ッ', 'ツ')
+    }
+
+
     private fun findBestMatch(input: String): Pokemon? {
-        val exact = pokemonList.find { it.name.equals(input, true) }
+        val exact = pokemonList.find {
+            it.name.equals(input, true) ||
+            it.japaneseKana?.equals(input) == true
+        }
+
         if (exact != null) return exact
 
         if (input.isEmpty()) return null
-        val firstChar = input.first().lowercaseChar()
-        val candidates = pokemonList.filter { it.name.isNotEmpty() && it.name.startsWith(firstChar, true) }
+        val containsJapanese = input.any { it in '\u3040'..'\u30FF' || it in '\u4E00'..'\u9FFF' }
+
 
         var bestPokemon: Pokemon? = null
         var bestDist = Int.MAX_VALUE
 
-        for (p in candidates) {
-            val dist = levenshtein(input.lowercase(), p.name.lowercase())
-            val threshold = if (p.name.length < 6) 1 else 2
+        for (p in pokemonList) {
+
+            // English fuzzy match
+            val engDist = if (!containsJapanese)
+                levenshtein(input.lowercase(), p.name.lowercase())
+            else Int.MAX_VALUE
+
+
+            // Japanese fuzzy match
+            val jpDist = p.japaneseKana?.let {
+                levenshtein(
+                    normalizeKana(input),
+                    normalizeKana(it)
+                )
+            } ?: Int.MAX_VALUE
+
+
+            val dist = minOf(engDist, jpDist)
+
+            val englishLengthDiff = kotlin.math.abs(input.length - p.name.length)
+            val japaneseLengthDiff = p.japaneseKana?.let {
+                kotlin.math.abs(input.length - it.length)
+            } ?: Int.MAX_VALUE
+
+            if (minOf(englishLengthDiff, japaneseLengthDiff) > 2) continue
+
+
+            val threshold = 1
+
+
             if (dist <= threshold && dist < bestDist) {
                 bestDist = dist
                 bestPokemon = p
             }
         }
+
         return bestPokemon
+
     }
 
     private fun levenshtein(lhs: CharSequence, rhs: CharSequence): Int {

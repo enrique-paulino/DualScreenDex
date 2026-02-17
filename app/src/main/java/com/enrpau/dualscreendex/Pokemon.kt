@@ -9,5 +9,6 @@ data class Pokemon(
     val id: Int,
     val type1: PokemonType,
     val type2: PokemonType?,
-    val variantLabel: String? = null
+    val variantLabel: String? = null,
+    val japaneseKana: String? = null
 ) : Parcelable
